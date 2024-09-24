@@ -17,5 +17,8 @@ export const routes: Routes = [
         path: 'classe',
         component: ClasseComponent
     },
-   
+    {
+        path: 'diretor',
+        component: DiretorComponent
+    },
 ];
