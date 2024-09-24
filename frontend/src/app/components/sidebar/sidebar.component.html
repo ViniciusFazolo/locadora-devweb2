@@ -1,9 +1,21 @@
 <div class="card flex justify-content-center">
     <p-sidebar [(visible)]="show" (onHide)="close()">
-        <h3>Sidebar</h3>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        </p>
+        <div class="flex flex-column">
+            <a routerLink="" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                [routerLinkActiveOptions]="{exact: true}"
+                (click)="close()"
+                >
+                <i class="pi pi-home mr-3"></i>
+                Página Inicial
+            </a>
+            <a routerLink="/ator" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-user mr-3"></i>
+                Ator
+            </a>
+        </div>
     </p-sidebar>
 </div>
