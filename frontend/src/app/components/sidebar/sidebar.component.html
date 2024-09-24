@@ -26,6 +26,13 @@
                 Classe
             </a>
 
+            <a routerLink="/diretor" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-megaphone mr-3"></i>
+                Diretor
+            </a>
         </div>
     </p-sidebar>
 </div>
