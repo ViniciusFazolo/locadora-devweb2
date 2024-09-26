@@ -21,14 +21,6 @@
         }
     </p-table>
 
-    @if (items.length <= 0) {
-        <div class="mt-3">
-            <span class="text-gray-700">
-                Não há registros
-            </span>
-        </div>
-    }
-
     @if (isDialogOpen) {
         <app-dialog [visible]="isDialogOpen" (closeDialog)="toggleDialog()" [header]="itemToEdit ? 'Editar Ator' : 'Novo ator'">
             <form>
