@@ -7,9 +7,7 @@ import com.vinicius.locadora.model.Classe;
 import com.vinicius.locadora.model.ResponseModel;
 import com.vinicius.locadora.repository.ClasseRepository;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.HibernateJdbcException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
