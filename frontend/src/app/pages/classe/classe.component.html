@@ -19,7 +19,7 @@
       <tr>
         <td>{{ item.nome }}</td>
         <td>{{ item.valor }}</td>
-        <td>{{ item.prazoDevolucao}}</td>
+        <td>{{ item.prazoDevolucao | date: 'shortDate' }}</td>
         <td>
           <p-button
             label="Editar"
@@ -69,9 +69,8 @@
         <label for="" class="block mb-2">Prazo de Devolução: </label>
         <input
           type="date"
-          name=""
-          id=""
-          onclick=""
+          [(ngModel)]="prazoDevolucao"
+          [ngModelOptions]="{ standalone: true }"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
         />
       </div>

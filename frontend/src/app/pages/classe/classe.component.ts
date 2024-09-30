@@ -10,12 +10,12 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ClasseService } from '../../services/classe.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Classe } from '../../interfaces/classe';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-classe',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CalendarModule],
+  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, DatePipe],
   templateUrl: './classe.component.html',
   providers: [MessageService, ConfirmationService],
   styles: ``
