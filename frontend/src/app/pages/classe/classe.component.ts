@@ -17,7 +17,7 @@ import { DatePipe } from '@angular/common';
   standalone: true,
   imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, DatePipe],
   templateUrl: './classe.component.html',
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService, ConfirmationService, DatePipe],
   styles: ``
 })
 export class ClasseComponent implements OnInit{
@@ -25,10 +25,10 @@ export class ClasseComponent implements OnInit{
   items!: Classe[]
   itemToEdit!: Classe | null;
   classe: string = '';
-  prazoDevolucao!: Date;
+  prazoDevolucao: string = '';
   valor: number = 0;
 
-  constructor(private messageService: MessageService, private classeService: ClasseService, private confirmationService: ConfirmationService) {}
+  constructor(private messageService: MessageService, private classeService: ClasseService, private confirmationService: ConfirmationService, private datePipe: DatePipe) {}
 
   ngOnInit(): void {
     this.listAll()
@@ -36,7 +36,7 @@ export class ClasseComponent implements OnInit{
 
   toggleDialog(){
     this.classe = ''
-    this.prazoDevolucao = new Date()
+    this.prazoDevolucao = ''
     this.valor = 0
     this.isDialogOpen = !this.isDialogOpen
   }
@@ -70,6 +70,8 @@ export class ClasseComponent implements OnInit{
       next: (res) => {
         this.itemToEdit = res.dados
         this.classe = this.itemToEdit.nome;
+        this.valor = this.itemToEdit.valor;
+        this.prazoDevolucao = this.datePipe.transform(this.itemToEdit.prazoDevolucao, 'yyyy-MM-dd') || ''
         this.isDialogOpen = true
       },
       error: () => {
