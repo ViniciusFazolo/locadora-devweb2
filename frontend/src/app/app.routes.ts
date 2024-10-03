@@ -3,6 +3,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AtorComponent } from './pages/ator/ator.component';
 import { ClasseComponent } from './pages/classe/classe.component';
 import { DiretorComponent } from './pages/diretor/diretor.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 export const routes: Routes = [
     {
@@ -21,4 +22,8 @@ export const routes: Routes = [
         path: 'diretor',
         component: DiretorComponent
     },
+    {
+        path: '**',
+        component: NotFoundComponent
+    }
 ];
