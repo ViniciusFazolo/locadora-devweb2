@@ -24,6 +24,13 @@ public class ClasseService {
 
     public ResponseModel<ClasseResponseDTO> salvar(ClasseRequestDTO obj) {
         ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
+
+        if(obj.nome() == null || obj.prazoDevolucao() == null || obj.valor() == null){
+            response.setMensagem("Preencha todos os campos");
+            response.setStatus(false);
+            return response;
+        }
+
         try {
             response.setDados(classeMapper.toDTO(classeRepository.save(classeMapper.toEntity(obj))));
             response.setMensagem("Registro salvo com sucesso");
@@ -60,6 +67,13 @@ public class ClasseService {
 
     public ResponseModel<ClasseResponseDTO> atualizar(int id, ClasseRequestDTO request){
         ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
+
+        if(request.nome() == null || request.prazoDevolucao() == null || request.valor() == null){
+            response.setMensagem("Preencha todos os campos");
+            response.setStatus(false);
+            return response;
+        }
+        
         try {
             Classe obj = classeRepository.findById(id).orElseThrow();
             obj.setNome(request.nome());
