@@ -24,6 +24,13 @@ public class DiretorService {
 
     public ResponseModel<DiretorResponseDTO> salvar(DiretorRequestDTO obj) {
         ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
+
+        if(obj.nome() == null){
+            response.setMensagem("Preencha todos os campos");
+            response.setStatus(false);
+            return response;
+        }
+
         try {
             response.setDados(diretorMapper.toDTO(diretorRepository.save(diretorMapper.toEntity(obj))));
             response.setMensagem("Registro salvo com sucesso");
@@ -60,6 +67,13 @@ public class DiretorService {
 
     public ResponseModel<DiretorResponseDTO> atualizar(int id, DiretorRequestDTO request){
         ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
+
+        if(request.nome() == null){
+            response.setMensagem("Preencha todos os campos");
+            response.setStatus(false);
+            return response;
+        }
+
         try {
             Diretor obj = diretorRepository.findById(id).orElseThrow();
             obj.setNome(request.nome());
