@@ -4,7 +4,7 @@ import java.util.Date;
 
 public record ClasseRequestDTO(
     String nome,
-    double valor,
+    Double valor,
     Date prazoDevolucao
 ) {
     

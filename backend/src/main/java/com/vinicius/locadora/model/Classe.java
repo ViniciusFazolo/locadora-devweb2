@@ -21,6 +21,6 @@ public class Classe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
-    private double valor;
+    private Double valor;
     private Date prazoDevolucao; 
 }
