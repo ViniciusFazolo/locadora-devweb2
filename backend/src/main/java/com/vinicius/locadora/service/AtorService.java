@@ -24,6 +24,13 @@ public class AtorService{
 
     public ResponseModel<AtorResponseDTO> salvarAtor(AtorRequestDTO ator) {
         ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
+        
+        if(ator.nome() == null){
+            response.setMensagem("Preencha todos os campos");
+            response.setStatus(false);
+            return response;
+        }
+
         try {
             response.setDados(atorMapper.toDTO(atorRepository.save(atorMapper.toEntity(ator))));
             response.setMensagem("Ator salvo com sucesso");
@@ -60,6 +67,13 @@ public class AtorService{
 
     public ResponseModel<AtorResponseDTO> atualizar(int id, AtorRequestDTO request){
         ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
+
+        if(request.nome() == null){
+            response.setMensagem("Preencha todos os campos");
+            response.setStatus(false);
+            return response;
+        }
+
         try {
             Ator ator = atorRepository.findById(id).orElseThrow();
             ator.setNome(request.nome());
