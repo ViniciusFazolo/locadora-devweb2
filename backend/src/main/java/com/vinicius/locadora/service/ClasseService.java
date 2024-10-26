@@ -2,6 +2,7 @@ package com.vinicius.locadora.service;
 
 import com.vinicius.locadora.DTO.RequestDTO.ClasseRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.ClasseResponseDTO;
+import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.ClasseMapper;
 import com.vinicius.locadora.model.Classe;
 import com.vinicius.locadora.model.ResponseModel;
@@ -26,9 +27,7 @@ public class ClasseService {
         ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
 
         if(obj.nome() == null || obj.prazoDevolucao() == null || obj.valor() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+            throw new PreencherTodosCamposException();
         }
 
         try {
@@ -68,10 +67,8 @@ public class ClasseService {
     public ResponseModel<ClasseResponseDTO> atualizar(int id, ClasseRequestDTO request){
         ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
 
-        if(request.nome() == null || request.prazoDevolucao() == null || request.valor() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+        if(request.nome() == null || request.nome().isBlank() || request.prazoDevolucao() == null || request.prazoDevolucao().equals("") || request.valor() == null){
+            throw new PreencherTodosCamposException();
         }
         
         try {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.AtorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.AtorResponseDTO;
+import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.AtorMapper;
 import com.vinicius.locadora.model.Ator;
 import com.vinicius.locadora.model.ResponseModel;
@@ -25,10 +26,8 @@ public class AtorService{
     public ResponseModel<AtorResponseDTO> salvarAtor(AtorRequestDTO ator) {
         ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
         
-        if(ator.nome() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+        if(ator.nome() == null || ator.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
 
         try {
@@ -68,10 +67,8 @@ public class AtorService{
     public ResponseModel<AtorResponseDTO> atualizar(int id, AtorRequestDTO request){
         ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
 
-        if(request.nome() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+        if(request.nome() == null || request.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
 
         try {

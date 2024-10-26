@@ -2,6 +2,7 @@ package com.vinicius.locadora.service;
 
 import com.vinicius.locadora.DTO.RequestDTO.DiretorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.DiretorResponseDTO;
+import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.DiretorMapper;
 import com.vinicius.locadora.model.Diretor;
 import com.vinicius.locadora.model.ResponseModel;
@@ -25,10 +26,8 @@ public class DiretorService {
     public ResponseModel<DiretorResponseDTO> salvar(DiretorRequestDTO obj) {
         ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
 
-        if(obj.nome() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+        if(obj.nome() == null || obj.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
 
         try {
@@ -68,10 +67,8 @@ public class DiretorService {
     public ResponseModel<DiretorResponseDTO> atualizar(int id, DiretorRequestDTO request){
         ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
 
-        if(request.nome() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+        if(request.nome() == null || request.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
 
         try {
