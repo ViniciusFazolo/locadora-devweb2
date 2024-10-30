@@ -6,6 +6,7 @@ import java.util.List;
 import com.vinicius.locadora.model.Titulo;
 
 public record ClasseRequestDTO(
+    int id,
     String nome,
     Double valor,
     Date prazoDevolucao,
