@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.vinicius.locadora.exceptions.ErroPadrao;
+import com.vinicius.locadora.exceptions.ItemNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,12 +18,23 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     
     @ExceptionHandler(PreencherTodosCamposException.class)
-    public ResponseEntity<ErroPadrao> atorNaoEncontradoHandle(PreencherTodosCamposException e, HttpServletRequest req) {
+    public ResponseEntity<ErroPadrao> PreencherTodosOsCamposHandler(PreencherTodosCamposException e, HttpServletRequest req) {
         ErroPadrao err = new ErroPadrao();
         err.setMessage(e.getMessage());
         err.setPath(req.getRequestURI());
         err.setStatus(HttpStatus.BAD_REQUEST.value());
         err.setTimestamp(Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+    
+    //item
+    @ExceptionHandler(ItemNaoEncontradoException.class)
+    public ResponseEntity<ErroPadrao> ItemNaoEncontradoHandler(ItemNaoEncontradoException e, HttpServletRequest req) {
+        ErroPadrao err = new ErroPadrao();
+        err.setMessage(e.getMessage());
+        err.setPath(req.getRequestURI());
+        err.setStatus(HttpStatus.NOT_FOUND.value());
+        err.setTimestamp(Instant.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 }
