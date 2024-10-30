@@ -13,39 +13,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vinicius.locadora.DTO.RequestDTO.AtorRequestDTO;
-import com.vinicius.locadora.DTO.ResponseDTO.AtorResponseDTO;
-import com.vinicius.locadora.service.AtorService;
+import com.vinicius.locadora.DTO.RequestDTO.TituloRequestDTO;
+import com.vinicius.locadora.DTO.ResponseDTO.TituloResponseDTO;
+import com.vinicius.locadora.service.TituloService;
 
 @RestController
-@RequestMapping("/ator")
-public class AtorController {
+@RequestMapping("/titulo")
+public class TituloController {
     
     @Autowired
-    private AtorService atorService;
+    private TituloService itemService;
 
     @PostMapping("/novo")
-    public ResponseEntity<AtorResponseDTO> salvar(@RequestBody AtorRequestDTO request){
-        return atorService.salvar(request);
+    public ResponseEntity<TituloResponseDTO> salvar(@RequestBody TituloRequestDTO request){
+        return itemService.salvar(request);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AtorResponseDTO> buscarPorId(@PathVariable int id){
-        return atorService.buscarPorId(id);
+    public ResponseEntity<TituloResponseDTO> buscarPorId(@PathVariable int id){
+        return itemService.buscarPorId(id);
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<AtorResponseDTO>> buscarTodos(){
-        return atorService.buscarTodos();
+    public ResponseEntity<List<TituloResponseDTO>> buscarTodos(){
+        return itemService.buscarTodos();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AtorResponseDTO> atualizar(@RequestBody AtorRequestDTO request){
-        return atorService.atualizar(request);
+    @PutMapping("/update")
+    public ResponseEntity<TituloResponseDTO> atualizar(@RequestBody TituloRequestDTO request){
+        return itemService.atualizar(request);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletar(@PathVariable int id){
-        return atorService.deletar(id);
+        return itemService.deletar(id);
     }
 }

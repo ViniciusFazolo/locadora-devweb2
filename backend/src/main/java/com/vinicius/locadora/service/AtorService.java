@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.AtorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.AtorResponseDTO;
+import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
+import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.AtorMapper;
 import com.vinicius.locadora.model.Ator;
-import com.vinicius.locadora.model.ResponseModel;
 import com.vinicius.locadora.repository.AtorRepository;
 
 @Service
@@ -22,80 +25,46 @@ public class AtorService{
     @Autowired
     private AtorMapper atorMapper;
 
-    public ResponseModel<AtorResponseDTO> salvarAtor(AtorRequestDTO ator) {
-        ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
-        
-        if(ator.nome() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+    public ResponseEntity<AtorResponseDTO> salvar(AtorRequestDTO request) {
+        if(request.nome() == null || request.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
 
-        try {
-            response.setDados(atorMapper.toDTO(atorRepository.save(atorMapper.toEntity(ator))));
-            response.setMensagem("Ator salvo com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao salvar ator");
-            response.setStatus(false);
-        }
-        return response;
+        Ator obj = new Ator();
+        obj.setNome(request.nome());
+        obj.setTitulo(request.titulos());
+        obj = atorRepository.save(obj);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(atorMapper.toDTO(obj));
     }
 
-    public ResponseModel<AtorResponseDTO> buscarPorId(int id){
-        ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
-        try {
-            response.setDados(atorMapper.toDTO(atorRepository.findById(id).orElseThrow()));
-            response.setMensagem("Ator encontrado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao buscar ator");
-            response.setStatus(false);
-        }
-        return response;
+    public ResponseEntity<AtorResponseDTO> buscarPorId(int id){
+        Ator obj = atorRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id: " + id));
+        return ResponseEntity.ok().body(atorMapper.toDTO(obj));
     }
 
-    public ResponseModel<List<AtorResponseDTO>> buscarTodos(){
-        ResponseModel<List<AtorResponseDTO>> response = new ResponseModel<>();
-        try {
-            response.setDados(atorRepository.findAll().stream().map(atorMapper::toDTO).collect(Collectors.toList()));
-            response.setMensagem("Atores encontrados com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao buscar atores");
-            response.setStatus(false);
-        }
-        return response;
+    public ResponseEntity<List<AtorResponseDTO>> buscarTodos(){
+        return ResponseEntity.ok().body(atorRepository.findAll().stream().map(atorMapper::toDTO).collect(Collectors.toList()));
     }       
 
-    public ResponseModel<AtorResponseDTO> atualizar(int id, AtorRequestDTO request){
-        ResponseModel<AtorResponseDTO> response = new ResponseModel<>();
-
-        if(request.nome() == null){
-            response.setMensagem("Preencha todos os campos");
-            response.setStatus(false);
-            return response;
+    public ResponseEntity<AtorResponseDTO> atualizar(AtorRequestDTO request){
+        if(request.nome() == null || request.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
 
-        try {
-            Ator ator = atorRepository.findById(id).orElseThrow();
-            ator.setNome(request.nome());
-            response.setDados(atorMapper.toDTO(atorRepository.save(ator)));
-            response.setMensagem("Ator atualizado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao atualizar ator");
-            response.setStatus(false);
-        }
-        return response;
+        Ator obj = atorRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id: " + request.id()));
+        
+        obj.setNome(request.nome());
+        obj.setTitulo(request.titulos());
+        atorRepository.save(obj);
+
+        return ResponseEntity.ok().body(atorMapper.toDTO(obj));
     }
 
-    public ResponseModel<String> deletar(int id){
-        ResponseModel<String> response = new ResponseModel<>();
-        try {
-            atorRepository.deleteById(id);
-            response.setMensagem("Ator deletado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao deletar ator");
-            response.setStatus(false);
-        }
-        return response;
+    public ResponseEntity<String> deletar(int id){
+        Ator obj = atorRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id:" + id));
+        atorRepository.delete(obj);
+     
+        return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
-
 }

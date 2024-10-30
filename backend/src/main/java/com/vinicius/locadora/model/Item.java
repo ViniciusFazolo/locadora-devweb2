@@ -1,28 +1,31 @@
 package com.vinicius.locadora.model;
 
-import java.util.List;
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class Diretor {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Item {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    String nome;
+    private int numSerie;
+    private Date dtAquisicao;
+    private String tipoItem;
 
-    @OneToMany(mappedBy = "diretor")
-    List<Titulo> titulos;
+    @ManyToOne
+    private Titulo titulo;
 }
