@@ -2,9 +2,9 @@ package com.vinicius.locadora.controller;
 
 import com.vinicius.locadora.DTO.RequestDTO.DiretorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.DiretorResponseDTO;
-import com.vinicius.locadora.model.ResponseModel;
 import com.vinicius.locadora.service.DiretorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,27 +23,27 @@ public class DiretorController {
     private DiretorService diretorService;
 
     @PostMapping("/novo")
-    public ResponseModel<DiretorResponseDTO> salvar(@RequestBody DiretorRequestDTO request){
+    public ResponseEntity<DiretorResponseDTO> salvar(@RequestBody DiretorRequestDTO request){
         return diretorService.salvar(request);
     }
 
     @GetMapping("/{id}")
-    public ResponseModel<DiretorResponseDTO> buscarPorId(@PathVariable int id){
+    public ResponseEntity<DiretorResponseDTO> buscarPorId(@PathVariable int id){
         return diretorService.buscarPorId(id);
     }
 
     @GetMapping("/listar")
-    public ResponseModel<List<DiretorResponseDTO>> buscarTodos(){
+    public ResponseEntity<List<DiretorResponseDTO>> buscarTodos(){
         return diretorService.buscarTodos();
     }
 
     @PutMapping("/{id}")
-    public ResponseModel<DiretorResponseDTO> atualizar(@PathVariable int id, @RequestBody DiretorRequestDTO request){
-        return diretorService.atualizar(id, request);
+    public ResponseEntity<DiretorResponseDTO> atualizar(@RequestBody DiretorRequestDTO request){
+        return diretorService.atualizar(request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseModel<String> deletar(@PathVariable int id){
+    public ResponseEntity<String> deletar(@PathVariable int id){
         return diretorService.deletar(id);
     }
 }
