@@ -17,7 +17,7 @@
                 <i class="pi pi-user mr-3"></i>
                 Ator
             </a>
-            
+
             <a routerLink="/classe" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
                 [routerLinkActive]="'bg-blue-400 text-white'"
                 (click)="close()"
@@ -32,6 +32,22 @@
                 >
                 <i class="pi pi-megaphone mr-3"></i>
                 Diretor
+            </a>
+
+            <a routerLink="/item" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-list mr-3"></i>
+                Item
+            </a>
+
+            <a routerLink="/titulo" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-video mr-3"></i>
+                Título
             </a>
         </div>
     </p-sidebar>

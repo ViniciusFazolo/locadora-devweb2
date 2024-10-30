@@ -4,6 +4,8 @@ import { AtorComponent } from './pages/ator/ator.component';
 import { ClasseComponent } from './pages/classe/classe.component';
 import { DiretorComponent } from './pages/diretor/diretor.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { ItemComponent } from './pages/item/item.component';
+import { TituloComponent } from './pages/titulo/titulo.component';
 
 export const routes: Routes = [
     {
@@ -21,6 +23,14 @@ export const routes: Routes = [
     {
         path: 'diretor',
         component: DiretorComponent
+    },
+    {
+      path: 'item',
+      component: ItemComponent
+    },
+    {
+      path: 'titulo',
+      component: TituloComponent
     },
     {
         path: '**',

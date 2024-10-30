@@ -10,6 +10,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { Ator } from '../../interfaces/ator';
 import { AtorService } from '../../services/ator.service';
 import { FormsModule } from '@angular/forms';
+import { Titulo } from '../../interfaces/titulo';
 
 @Component({
   selector: 'app-ator',
@@ -24,6 +25,7 @@ export class AtorComponent implements OnInit{
   items!: Ator[]
   itemToEdit!: Ator | null;
   ator: string = ''
+  titulos: Titulo[] = []
 
   constructor(private messageService: MessageService, private atorService: AtorService, private confirmationService: ConfirmationService) {}
 
@@ -39,7 +41,8 @@ export class AtorComponent implements OnInit{
   listAll(){
     this.atorService.listAll().subscribe({
       next: (res) => {
-        this.items = res.dados
+        this.items = res;
+        console.log(this.items)
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar atores' });
@@ -63,8 +66,9 @@ export class AtorComponent implements OnInit{
   handleEdit(id: number){
     this.atorService.listById(id).subscribe({
       next: (res) => {
-        this.itemToEdit = res.dados
+        this.itemToEdit = res
         this.ator = this.itemToEdit.nome;
+        this.titulos = this.itemToEdit.titulo;
         this.isDialogOpen = true
       },
       error: () => {
@@ -88,6 +92,7 @@ export class AtorComponent implements OnInit{
   edit(){
     const obj: Ator = {
       nome: this.ator,
+      titulo: this.titulos,
       id: this.itemToEdit?.id
     }
 
@@ -107,6 +112,7 @@ export class AtorComponent implements OnInit{
   create(){
     const obj: Ator = {
       nome: this.ator,
+      titulo: this.titulos
     }
 
     this.atorService.create(obj).subscribe({

@@ -44,7 +44,7 @@ export class ClasseComponent implements OnInit{
   listAll(){
     this.classeService.listAll().subscribe({
       next: (res) => {
-        this.items = res.dados
+        res
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar classes' });
@@ -68,7 +68,7 @@ export class ClasseComponent implements OnInit{
   handleEdit(id: number){
     this.classeService.listById(id).subscribe({
       next: (res) => {
-        this.itemToEdit = res.dados
+        this.itemToEdit = res;
         this.classe = this.itemToEdit.nome;
         this.valor = this.itemToEdit.valor;
         this.prazoDevolucao = this.datePipe.transform(this.itemToEdit.prazoDevolucao, 'yyyy-MM-dd') || ''

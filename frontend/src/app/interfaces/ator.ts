@@ -1,4 +1,7 @@
+import { Titulo } from "./titulo";
+
 export interface Ator{
     id?: number,
-    nome: string
+    nome: string,
+    titulo: Titulo[]
 }
