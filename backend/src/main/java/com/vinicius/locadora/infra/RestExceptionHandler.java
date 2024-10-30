@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.vinicius.locadora.exceptions.ErroPadrao;
-import com.vinicius.locadora.exceptions.ItemNaoEncontradoException;
+import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +28,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
     
     //item
-    @ExceptionHandler(ItemNaoEncontradoException.class)
-    public ResponseEntity<ErroPadrao> ItemNaoEncontradoHandler(ItemNaoEncontradoException e, HttpServletRequest req) {
+    @ExceptionHandler(ObjetoNaoEncontradoException.class)
+    public ResponseEntity<ErroPadrao> ObjetoNaoEncontradoHandler(ObjetoNaoEncontradoException e, HttpServletRequest req) {
         ErroPadrao err = new ErroPadrao();
         err.setMessage(e.getMessage());
         err.setPath(req.getRequestURI());
