@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.ItemRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.ItemResponseDTO;
-import com.vinicius.locadora.exceptions.ItemNaoEncontradoException;
+import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.ItemMapper;
 import com.vinicius.locadora.model.Item;
@@ -41,7 +41,7 @@ public class ItemService{
     }
 
     public ResponseEntity<ItemResponseDTO> buscarPorId(int id){
-        Item obj = itemRepository.findById(id).orElseThrow(() -> new ItemNaoEncontradoException(id));
+        Item obj = itemRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o item de id: " + id));
         return ResponseEntity.ok().body(itemMapper.toDTO(obj));
     }
 
@@ -54,7 +54,7 @@ public class ItemService{
             throw new PreencherTodosCamposException();
         }
         
-        Item obj = itemRepository.findById(request.id()).orElseThrow(() -> new ItemNaoEncontradoException(request.id()));
+        Item obj = itemRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o item de id:" + request.id()));
 
         obj.setNumSerie(request.numSerie());
         obj.setDtAquisicao(request.dtAquisicao());
@@ -66,7 +66,7 @@ public class ItemService{
     }
 
     public ResponseEntity<String> deletar(int id){
-        Item obj = itemRepository.findById(id).orElseThrow(() -> new ItemNaoEncontradoException(id));
+        Item obj = itemRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o item de id:" + id));
         itemRepository.delete(obj);
      
         return ResponseEntity.ok().body("Registro excluído com sucesso");

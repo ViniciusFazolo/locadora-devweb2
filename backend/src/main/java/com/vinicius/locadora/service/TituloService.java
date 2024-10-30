@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.TituloRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.TituloResponseDTO;
-import com.vinicius.locadora.exceptions.ItemNaoEncontradoException;
+import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.TituloMapper;
 import com.vinicius.locadora.model.Titulo;
@@ -45,7 +45,7 @@ public class TituloService{
     }
 
     public ResponseEntity<TituloResponseDTO> buscarPorId(int id){
-        Titulo obj = tituloRepository.findById(id).orElseThrow(() -> new ItemNaoEncontradoException(id));
+        Titulo obj = tituloRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o titulo de id: " + id));
         return ResponseEntity.ok().body(tituloMapper.toDTO(obj));
     }
 
@@ -58,7 +58,7 @@ public class TituloService{
             throw new PreencherTodosCamposException();
         }
         
-        Titulo obj = tituloRepository.findById(request.id()).orElseThrow(() -> new ItemNaoEncontradoException(request.id()));
+        Titulo obj = tituloRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o titulo de id: " + request.id()));
 
         obj.setAno(request.ano());
         obj.setNome(request.nome());
@@ -74,7 +74,7 @@ public class TituloService{
     }
 
     public ResponseEntity<String> deletar(int id){
-        Titulo obj = tituloRepository.findById(id).orElseThrow(() -> new ItemNaoEncontradoException(id));
+        Titulo obj = tituloRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o titulo de id: " + id));
         tituloRepository.delete(obj);
      
         return ResponseEntity.ok().body("Registro excluído com sucesso");

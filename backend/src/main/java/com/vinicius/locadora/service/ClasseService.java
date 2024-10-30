@@ -2,13 +2,14 @@ package com.vinicius.locadora.service;
 
 import com.vinicius.locadora.DTO.RequestDTO.ClasseRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.ClasseResponseDTO;
+import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.ClasseMapper;
 import com.vinicius.locadora.model.Classe;
-import com.vinicius.locadora.model.ResponseModel;
 import com.vinicius.locadora.repository.ClasseRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,78 +24,50 @@ public class ClasseService {
     @Autowired
     private ClasseMapper classeMapper;
 
-    public ResponseModel<ClasseResponseDTO> salvar(ClasseRequestDTO obj) {
-        ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
-
-        if(obj.nome() == null || obj.prazoDevolucao() == null || obj.valor() == null){
+    public ResponseEntity<ClasseResponseDTO> salvar(ClasseRequestDTO request) {
+        if(request.nome() == null || request.prazoDevolucao() == null || request.valor() == null){
             throw new PreencherTodosCamposException();
         }
 
-        try {
-            response.setDados(classeMapper.toDTO(classeRepository.save(classeMapper.toEntity(obj))));
-            response.setMensagem("Registro salvo com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao salvar registro");
-            response.setStatus(false);
-        }
-        return response;
+        Classe obj = new Classe();
+        obj.setNome(request.nome());
+        obj.setValor(request.valor());
+        obj.setPrazoDevolucao(request.prazoDevolucao());
+        obj.setTitulos(request.titulos());
+        obj = classeRepository.save(obj);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(classeMapper.toDTO(obj));
     }
 
-    public ResponseModel<ClasseResponseDTO> buscarPorId(int id){
-        ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
-        try {
-            response.setDados(classeMapper.toDTO(classeRepository.findById(id).orElseThrow()));
-            response.setMensagem("Registro encontrado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao buscar registro");
-            response.setStatus(false);
-        }
-        return response;
+    public ResponseEntity<ClasseResponseDTO> buscarPorId(int id){
+        Classe obj = classeRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a classe de id: " + id));
+        return ResponseEntity.ok().body(classeMapper.toDTO(obj));
     }
 
-    public ResponseModel<List<ClasseResponseDTO>> buscarTodos(){
-        ResponseModel<List<ClasseResponseDTO>> response = new ResponseModel<>();
-        try {
-            response.setDados(classeRepository.findAll().stream().map(classeMapper::toDTO).collect(Collectors.toList()));
-            response.setMensagem("Registros encontrados com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao buscar registros");
-            response.setStatus(false);
-        }
-        return response;
+    public ResponseEntity<List<ClasseResponseDTO>> buscarTodos(){
+        return ResponseEntity.ok().body(classeRepository.findAll().stream().map(classeMapper::toDTO).collect(Collectors.toList()));
     }
 
-    public ResponseModel<ClasseResponseDTO> atualizar(int id, ClasseRequestDTO request){
-        ResponseModel<ClasseResponseDTO> response = new ResponseModel<>();
-
+    public ResponseEntity<ClasseResponseDTO> atualizar(ClasseRequestDTO request){
         if(request.nome() == null || request.nome().isBlank() || request.prazoDevolucao() == null || request.prazoDevolucao().equals("") || request.valor() == null){
             throw new PreencherTodosCamposException();
         }
         
-        try {
-            Classe obj = classeRepository.findById(id).orElseThrow();
-            obj.setNome(request.nome());
-            obj.setValor(request.valor());
-            obj.setPrazoDevolucao(request.prazoDevolucao());
+        Classe obj = classeRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a classe de id: " + request.id()));
+        
+        obj.setNome(request.nome());
+        obj.setValor(request.valor());
+        obj.setPrazoDevolucao(request.prazoDevolucao());
+        obj.setTitulos(request.titulos());
+        classeRepository.save(obj);
 
-            response.setDados(classeMapper.toDTO(classeRepository.save(obj)));
-            response.setMensagem("Registro atualizado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao atualizar registro");
-            response.setStatus(false);
-        }
-        return response;
+        return ResponseEntity.ok().body(classeMapper.toDTO(obj));
     }
 
-    public ResponseModel<String> deletar(int id){
-        ResponseModel<String> response = new ResponseModel<>();
-        try {
-            classeRepository.deleteById(id);
-            response.setMensagem("Registro deletado com sucesso");
-        } catch (ConstraintViolationException e){
-            response.setMensagem("Erro ao deletar registro. Ele está vínculado a outros registros");
-            response.setStatus(false);
-        }
-        return response;
+    public ResponseEntity<String> deletar(int id){
+        Classe obj = classeRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a classe de id:" + id));
+        classeRepository.delete(obj);
+     
+        return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
 }

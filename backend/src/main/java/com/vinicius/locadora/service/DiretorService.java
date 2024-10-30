@@ -2,13 +2,14 @@ package com.vinicius.locadora.service;
 
 import com.vinicius.locadora.DTO.RequestDTO.DiretorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.DiretorResponseDTO;
+import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.DiretorMapper;
 import com.vinicius.locadora.model.Diretor;
-import com.vinicius.locadora.model.ResponseModel;
 import com.vinicius.locadora.repository.DiretorRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,76 +24,46 @@ public class DiretorService {
     @Autowired
     private DiretorMapper diretorMapper;
 
-    public ResponseModel<DiretorResponseDTO> salvar(DiretorRequestDTO obj) {
-        ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
-
-        if(obj.nome() == null || obj.nome().isBlank()){
-            throw new PreencherTodosCamposException();
-        }
-
-        try {
-            response.setDados(diretorMapper.toDTO(diretorRepository.save(diretorMapper.toEntity(obj))));
-            response.setMensagem("Registro salvo com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao salvar registro");
-            response.setStatus(false);
-        }
-        return response;
-    }
-
-    public ResponseModel<DiretorResponseDTO> buscarPorId(int id){
-        ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
-        try {
-            response.setDados(diretorMapper.toDTO(diretorRepository.findById(id).orElseThrow()));
-            response.setMensagem("Registro encontrado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao buscar registro");
-            response.setStatus(false);
-        }
-        return response;
-    }
-
-    public ResponseModel<List<DiretorResponseDTO>> buscarTodos(){
-        ResponseModel<List<DiretorResponseDTO>> response = new ResponseModel<>();
-        try {
-            response.setDados(diretorRepository.findAll().stream().map(diretorMapper::toDTO).collect(Collectors.toList()));
-            response.setMensagem("Registros encontrados com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao buscar registros");
-            response.setStatus(false);
-        }
-        return response;
-    }
-
-    public ResponseModel<DiretorResponseDTO> atualizar(int id, DiretorRequestDTO request){
-        ResponseModel<DiretorResponseDTO> response = new ResponseModel<>();
-
+    public ResponseEntity<DiretorResponseDTO> salvar(DiretorRequestDTO request) {
         if(request.nome() == null || request.nome().isBlank()){
             throw new PreencherTodosCamposException();
         }
 
-        try {
-            Diretor obj = diretorRepository.findById(id).orElseThrow();
-            obj.setNome(request.nome());
+        Diretor obj = new Diretor();
+        obj.setNome(request.nome());
+        obj.setTitulos(request.titulos());
+        obj = diretorRepository.save(obj);
 
-            response.setDados(diretorMapper.toDTO(diretorRepository.save(obj)));
-            response.setMensagem("Registro atualizado com sucesso");
-        } catch (Exception e) {
-            response.setMensagem("Erro ao atualizar registro");
-            response.setStatus(false);
-        }
-        return response;
+        return ResponseEntity.status(HttpStatus.CREATED).body(diretorMapper.toDTO(obj));
     }
 
-    public ResponseModel<String> deletar(int id){
-        ResponseModel<String> response = new ResponseModel<>();
-        try {
-            diretorRepository.deleteById(id);
-            response.setMensagem("Registro deletado com sucesso");
-        } catch (ConstraintViolationException e){
-            response.setMensagem("Não foi possível apagar o registro, pois, está vinculado a títulos");
-            response.setStatus(false);
+    public ResponseEntity<DiretorResponseDTO> buscarPorId(int id){
+        Diretor obj = diretorRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o diretor de id: " + id));
+        return ResponseEntity.ok().body(diretorMapper.toDTO(obj));
+    }
+
+    public ResponseEntity<List<DiretorResponseDTO>> buscarTodos(){
+        return ResponseEntity.ok().body(diretorRepository.findAll().stream().map(diretorMapper::toDTO).collect(Collectors.toList()));
+    }
+
+    public ResponseEntity<DiretorResponseDTO> atualizar(DiretorRequestDTO request){
+        if(request.nome() == null || request.nome().isBlank()){
+            throw new PreencherTodosCamposException();
         }
-        return response;
+
+        Diretor obj = diretorRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o diretor de id: " + request.id()));
+        
+        obj.setNome(request.nome());
+        obj.setTitulos(request.titulos());
+        diretorRepository.save(obj);
+
+        return ResponseEntity.ok().body(diretorMapper.toDTO(obj));
+    }
+
+    public ResponseEntity<String> deletar(int id){
+        Diretor obj = diretorRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o diretor de id:" + id));
+        diretorRepository.delete(obj);
+     
+        return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
 }
