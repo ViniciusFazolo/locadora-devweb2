@@ -42,7 +42,6 @@ export class AtorComponent implements OnInit{
     this.atorService.listAll().subscribe({
       next: (res) => {
         this.items = res;
-        console.log(this.items)
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar atores' });

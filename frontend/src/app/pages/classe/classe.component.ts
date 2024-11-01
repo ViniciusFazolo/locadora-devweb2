@@ -11,6 +11,7 @@ import { ClasseService } from '../../services/classe.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Classe } from '../../interfaces/classe';
 import { DatePipe } from '@angular/common';
+import { Titulo } from '../../interfaces/titulo';
 
 @Component({
   selector: 'app-classe',
@@ -27,6 +28,7 @@ export class ClasseComponent implements OnInit{
   classe: string = '';
   prazoDevolucao: string = '';
   valor: number = 0;
+  titulos: Titulo[] = [];
 
   constructor(private messageService: MessageService, private classeService: ClasseService, private confirmationService: ConfirmationService, private datePipe: DatePipe) {}
 
@@ -44,7 +46,7 @@ export class ClasseComponent implements OnInit{
   listAll(){
     this.classeService.listAll().subscribe({
       next: (res) => {
-        res
+        this.items = res
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar classes' });
@@ -97,6 +99,7 @@ export class ClasseComponent implements OnInit{
       nome: this.classe,
       prazoDevolucao: this.prazoDevolucao,
       valor: this.valor,
+      titulos: this.titulos,
       id: this.itemToEdit?.id
     }
 
@@ -118,6 +121,7 @@ export class ClasseComponent implements OnInit{
       nome: this.classe,
       prazoDevolucao: this.prazoDevolucao,
       valor: this.valor,
+      titulos: this.titulos
     }
 
     this.classeService.create(obj).subscribe({
