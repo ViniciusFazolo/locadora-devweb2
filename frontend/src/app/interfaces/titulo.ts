@@ -6,7 +6,7 @@ import { Item } from "./item"
 export interface Titulo{
     id?: number,
     nome: string,
-    ano: number,
+    ano: string,
     sinopse: string,
     categoria: string
     items: Item[],
