@@ -17,10 +17,10 @@ export class CrudService<T extends {id?: number}> {
   }
 
   update(obj: T): Observable<T> {
-    return this.httpClient.put<T>(`${this.url}/${obj.id}`, obj);
+    return this.httpClient.put<T>(`${this.url}/update`, obj);
   }
 
-  delete(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.url}/${id}`);
+  delete(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.url}/${id}`, { responseType: 'text' });
   }
 }
