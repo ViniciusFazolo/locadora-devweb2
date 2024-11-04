@@ -11,11 +11,13 @@ import { Ator } from '../../interfaces/ator';
 import { AtorService } from '../../services/ator.service';
 import { FormsModule } from '@angular/forms';
 import { Titulo } from '../../interfaces/titulo';
+import { TituloService } from '../../services/titulo.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-ator',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule],
+  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule],
   templateUrl: './ator.component.html',
   providers: [MessageService, ConfirmationService],
   styles: ``
@@ -27,10 +29,11 @@ export class AtorComponent implements OnInit{
   ator: string = ''
   titulos: Titulo[] = []
 
-  constructor(private messageService: MessageService, private atorService: AtorService, private confirmationService: ConfirmationService) {}
+  constructor(private messageService: MessageService, private atorService: AtorService, private confirmationService: ConfirmationService, private tituloService: TituloService) {}
 
   ngOnInit(): void {
-    this.listAll()
+    this.listAll();
+    this.listAllTitulos();
   }
 
   toggleDialog(){
@@ -45,6 +48,17 @@ export class AtorComponent implements OnInit{
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar atores' });
+      }
+    })
+  }
+
+  listAllTitulos(){
+    this.tituloService.listAll().subscribe({
+      next: (res) => {
+        this.titulos = res;
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
       }
     })
   }
