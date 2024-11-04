@@ -11,11 +11,13 @@ import { Diretor } from '../../interfaces/diretor';
 import { DiretorService } from '../../services/diretor.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Titulo } from '../../interfaces/titulo';
+import { TituloService } from '../../services/titulo.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-diretor',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule],
+  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule],
   templateUrl: './diretor.component.html',
   providers: [MessageService, ConfirmationService],
   styles: ``
@@ -27,10 +29,11 @@ export class DiretorComponent {
   diretor: string = ''
   titulos: Titulo[] = []
 
-  constructor(private messageService: MessageService, private diretorService: DiretorService, private confirmationService: ConfirmationService) {}
+  constructor(private messageService: MessageService, private diretorService: DiretorService, private confirmationService: ConfirmationService, private tituloService: TituloService) {}
 
   ngOnInit(): void {
-    this.listAll()
+    this.listAll();
+    this.listAllTitulos();
   }
 
   toggleDialog(){
@@ -45,6 +48,17 @@ export class DiretorComponent {
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar diretores' });
+      }
+    })
+  }
+
+  listAllTitulos(){
+    this.tituloService.listAll().subscribe({
+      next: (res) => {
+        this.titulos = res
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
       }
     })
   }
@@ -67,6 +81,7 @@ export class DiretorComponent {
       next: (res) => {
         this.itemToEdit = res
         this.diretor = this.itemToEdit.nome;
+        this.titulos = this.itemToEdit.titulos;
         this.isDialogOpen = true
       },
       error: () => {
