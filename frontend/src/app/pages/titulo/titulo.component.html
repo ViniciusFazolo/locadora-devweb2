@@ -1,1 +1,93 @@
-<p>titulo works!</p>
+<app-layout-base [title]="'Listagem de título'" [btnTitle]="'Novo'" (toggleDialog)="toggleDialog()">
+  <p-toast />
+  <p-confirmPopup />
+  <p-table [value]="titulos" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+          <tr>
+              <th>Nome</th>
+              <th>Ano</th>
+              <th>Sinopse</th>
+              <th>Categoria</th>
+              <th>Diretor</th>
+              <th>Classe</th>
+              <th>Ações</th>
+          </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+          <tr>
+              <td>{{ item.nome }}</td>
+              <td>{{ item.ano | date: 'yyyy'}}</td>
+              <td>{{ item.sinopse }}</td>
+              <td>{{ item.categoria }}</td>
+              <td>{{ item.diretor.nome }}</td>
+              <td>{{ item.classe.nome }}</td>
+              <td>
+                  <p-button label="Editar" icon="pi pi-pencil" size="small" class="mr-1" (onClick)="handleEdit(item.id!)"/>
+                  <p-button label="Excluir"icon="pi pi-trash" size="small" severity="danger" (onClick)="handleDelete($event, item.id!)"/>
+              </td>
+          </tr>
+      </ng-template>
+  </p-table>
+
+  @if (isDialogOpen) {
+      <app-dialog [visible]="isDialogOpen" (closeDialog)="toggleDialog()" [header]="itemToEdit ? 'Editar Título' : 'Novo título'">
+          <form (ngSubmit)="handleSave()">
+              <div class="mb-3 w-full">
+                  <label for="" class="block mb-2">Nome: </label>
+                  <input type="text"
+                      class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                      [(ngModel)]="nome" [ngModelOptions]="{standalone: true}">
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="" class="block mb-2">Ano: </label>
+                <input
+                  type="year"
+                  [(ngModel)]="ano"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                />
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="" class="block mb-2">Sinopse: </label>
+                <input type="text"
+                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                    [(ngModel)]="sinopse" [ngModelOptions]="{standalone: true}">
+            </div>
+
+            <div class="mb-3 w-full">
+              <label for="" class="block mb-2">Categoria: </label>
+              <input type="text"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                  [(ngModel)]="categoria" [ngModelOptions]="{standalone: true}">
+            </div>
+
+            <div class="mb-3 w-full">
+              <label for="diretor" class="block mb-2">Diretor: </label>
+              <select name="diretor" [(ngModel)]="selectedDiretor" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                <option *ngFor="let diretor of diretores" [ngValue]="diretor">{{ diretor.nome }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3 w-full">
+              <label for="classe" class="block mb-2">Classe: </label>
+              <select name="classe" [(ngModel)]="selectedClasse" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                <option *ngFor="let classe of classes" [ngValue]="classe">{{ classe.nome }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3 w-full">
+              <label for="ator" class="block mb-2">Atores: </label>
+              <select name="ator" [(ngModel)]="selectedAtores" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" multiple>
+                <option *ngFor="let ator of atores" [ngValue]="ator">{{ ator.nome }}</option>
+              </select>
+            </div>
+
+              <p-button label="Salvar" type="submit" severity="success" icon="pi pi-save" />
+          </form>
+      </app-dialog>
+  }
+</app-layout-base>
+
