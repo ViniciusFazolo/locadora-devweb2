@@ -2,6 +2,8 @@ package com.vinicius.locadora.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,5 +26,6 @@ public class Diretor {
     String nome;
 
     @OneToMany(mappedBy = "diretor")
+    @JsonIgnore
     List<Titulo> titulos;
 }

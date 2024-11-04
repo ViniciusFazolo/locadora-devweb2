@@ -3,10 +3,14 @@ package com.vinicius.locadora.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -30,12 +34,19 @@ public class Titulo {
     private String categoria;
 
     @OneToMany(mappedBy = "titulo")
+    @JsonIgnore
     private List<Item> items;
 
     @ManyToOne
     private Diretor diretor;
 
-    @ManyToMany(mappedBy = "titulo")
+    @ManyToMany
+    @JoinTable(
+        name = "ator_titulo",
+        joinColumns = @JoinColumn(name = "titulo_id"),
+        inverseJoinColumns = @JoinColumn(name = "ator_id")
+    )
+    @JsonIgnore
     private List<Ator> ator;
 
     @ManyToOne
