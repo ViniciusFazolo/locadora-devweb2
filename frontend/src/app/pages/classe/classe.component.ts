@@ -10,13 +10,14 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ClasseService } from '../../services/classe.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Classe } from '../../interfaces/classe';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Titulo } from '../../interfaces/titulo';
+import { TituloService } from '../../services/titulo.service';
 
 @Component({
   selector: 'app-classe',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, DatePipe],
+  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, DatePipe, CommonModule],
   templateUrl: './classe.component.html',
   providers: [MessageService, ConfirmationService, DatePipe],
   styles: ``
@@ -30,10 +31,11 @@ export class ClasseComponent implements OnInit{
   valor: number = 0;
   titulos: Titulo[] = [];
 
-  constructor(private messageService: MessageService, private classeService: ClasseService, private confirmationService: ConfirmationService, private datePipe: DatePipe) {}
+  constructor(private messageService: MessageService, private classeService: ClasseService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private tituloService: TituloService) {}
 
   ngOnInit(): void {
     this.listAll()
+    this.listAllTitulos()
   }
 
   toggleDialog(){
@@ -54,8 +56,20 @@ export class ClasseComponent implements OnInit{
     })
   }
 
+  listAllTitulos(){
+    this.tituloService.listAll().subscribe({
+      next: (res) => {
+        this.titulos = res;
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
+      }
+    })
+  }
+
+
   handleSave(){
-    if(!this.classe){
+    if(!this.classe || !this.prazoDevolucao || !this.valor){
       this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
       return
     }
@@ -73,7 +87,8 @@ export class ClasseComponent implements OnInit{
         this.itemToEdit = res;
         this.classe = this.itemToEdit.nome;
         this.valor = this.itemToEdit.valor;
-        this.prazoDevolucao = this.datePipe.transform(this.itemToEdit.prazoDevolucao, 'yyyy-MM-dd') || ''
+        this.prazoDevolucao = this.datePipe.transform(this.itemToEdit.prazoDevolucao, 'yyyy-MM-dd') || '';
+        this.titulos = this.itemToEdit.titulos;
         this.isDialogOpen = true
       },
       error: () => {
