@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.vinicius.locadora.exceptions.ErroPadrao;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
+import com.vinicius.locadora.exceptions.RelacionamentoException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -36,5 +37,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         err.setStatus(HttpStatus.NOT_FOUND.value());
         err.setTimestamp(Instant.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+
+    @ExceptionHandler(RelacionamentoException.class)
+    public ResponseEntity<ErroPadrao> RelacionamentoTituloHandler(RelacionamentoException e, HttpServletRequest req) {
+        ErroPadrao err = new ErroPadrao();
+        err.setMessage(e.getMessage());
+        err.setPath(req.getRequestURI());
+        err.setStatus(HttpStatus.BAD_REQUEST.value());
+        err.setTimestamp(Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 }
