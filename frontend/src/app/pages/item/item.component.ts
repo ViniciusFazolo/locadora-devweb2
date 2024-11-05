@@ -164,8 +164,15 @@ export class ItemComponent implements OnInit{
         this.listAll()
       },
       error: (err) => {
-        console.log(err)
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao excluir registro' });
+        let errorMessage: string;
+        try{
+          const errorResponse = JSON.parse(err.error);
+          errorMessage = errorResponse.message;
+
+        }catch{
+          errorMessage = 'Erro ao excluir registro';
+        }
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: errorMessage });
       }
     })
   }

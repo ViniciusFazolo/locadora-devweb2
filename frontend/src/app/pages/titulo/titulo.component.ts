@@ -220,8 +220,16 @@ export class TituloComponent implements OnInit{
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Título excluído com sucesso', life: 3000 });
         this.listAll()
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao excluir registro' });
+      error: (err) => {
+        let errorMessage: string;
+        try{
+          const errorResponse = JSON.parse(err.error);
+          errorMessage = errorResponse.message;
+
+        }catch{
+          errorMessage = 'Erro ao excluir registro';
+        }
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: errorMessage });
       }
     })
   }
