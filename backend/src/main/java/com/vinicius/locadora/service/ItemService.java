@@ -12,15 +12,21 @@ import com.vinicius.locadora.DTO.RequestDTO.ItemRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.ItemResponseDTO;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
+import com.vinicius.locadora.exceptions.RelacionamentoException;
 import com.vinicius.locadora.mapper.ItemMapper;
 import com.vinicius.locadora.model.Item;
+import com.vinicius.locadora.model.Titulo;
 import com.vinicius.locadora.repository.ItemRepository;
+import com.vinicius.locadora.repository.TituloRepository;
 
 @Service
 public class ItemService{
     
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private TituloRepository tituloRepository;
 
     @Autowired
     private ItemMapper itemMapper;
@@ -67,6 +73,14 @@ public class ItemService{
 
     public ResponseEntity<String> deletar(int id){
         Item obj = itemRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o item de id:" + id));
+
+        List<Titulo> titulos = tituloRepository.findAll();
+        for(Titulo titulo : titulos){
+            if(titulo.getItems().contains(obj)){
+                throw new RelacionamentoException();
+            }
+        }
+
         itemRepository.delete(obj);
      
         return ResponseEntity.ok().body("Registro excluído com sucesso");

@@ -12,15 +12,21 @@ import com.vinicius.locadora.DTO.RequestDTO.AtorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.AtorResponseDTO;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
+import com.vinicius.locadora.exceptions.RelacionamentoException;
 import com.vinicius.locadora.mapper.AtorMapper;
 import com.vinicius.locadora.model.Ator;
+import com.vinicius.locadora.model.Titulo;
 import com.vinicius.locadora.repository.AtorRepository;
+import com.vinicius.locadora.repository.TituloRepository;
 
 @Service
 public class AtorService{
     
     @Autowired
     private AtorRepository atorRepository;
+
+    @Autowired
+    private TituloRepository tituloRepository;
 
     @Autowired
     private AtorMapper atorMapper;
@@ -63,6 +69,14 @@ public class AtorService{
 
     public ResponseEntity<String> deletar(int id){
         Ator obj = atorRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id:" + id));
+        
+        List<Titulo> titulos = tituloRepository.findAll();
+        for(Titulo titulo : titulos){
+            if(titulo.getAtor().contains(obj)){
+                throw new RelacionamentoException();
+            }
+        }
+        
         atorRepository.delete(obj);
      
         return ResponseEntity.ok().body("Registro excluído com sucesso");

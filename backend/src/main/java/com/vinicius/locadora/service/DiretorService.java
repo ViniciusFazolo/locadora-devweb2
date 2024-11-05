@@ -4,9 +4,13 @@ import com.vinicius.locadora.DTO.RequestDTO.DiretorRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.DiretorResponseDTO;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
+import com.vinicius.locadora.exceptions.RelacionamentoException;
 import com.vinicius.locadora.mapper.DiretorMapper;
 import com.vinicius.locadora.model.Diretor;
+import com.vinicius.locadora.model.Titulo;
 import com.vinicius.locadora.repository.DiretorRepository;
+import com.vinicius.locadora.repository.TituloRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,9 @@ public class DiretorService {
 
     @Autowired
     private DiretorRepository diretorRepository;
+
+    @Autowired
+    private TituloRepository tituloRepository;
 
     @Autowired
     private DiretorMapper diretorMapper;
@@ -62,8 +69,16 @@ public class DiretorService {
 
     public ResponseEntity<String> deletar(int id){
         Diretor obj = diretorRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o diretor de id:" + id));
+        
+        List<Titulo> titulos = tituloRepository.findAll();
+        for(Titulo titulo : titulos){
+            if(titulo.getDiretor().equals(obj)){
+                throw new RelacionamentoException();
+            }
+        }
+
         diretorRepository.delete(obj);
-     
+
         return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
 }

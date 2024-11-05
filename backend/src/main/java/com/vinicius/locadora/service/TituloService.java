@@ -12,8 +12,11 @@ import com.vinicius.locadora.DTO.RequestDTO.TituloRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.TituloResponseDTO;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
+import com.vinicius.locadora.exceptions.RelacionamentoException;
 import com.vinicius.locadora.mapper.TituloMapper;
+import com.vinicius.locadora.model.Item;
 import com.vinicius.locadora.model.Titulo;
+import com.vinicius.locadora.repository.ItemRepository;
 import com.vinicius.locadora.repository.TituloRepository;
 
 @Service
@@ -21,6 +24,9 @@ public class TituloService{
     
     @Autowired
     private TituloRepository tituloRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
 
     @Autowired
     private TituloMapper tituloMapper;
@@ -75,8 +81,15 @@ public class TituloService{
 
     public ResponseEntity<String> deletar(int id){
         Titulo obj = tituloRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o titulo de id: " + id));
+        
+        List<Item> itens = itemRepository.findAll();
+        for(Item item : itens){
+            if(item.getTitulo().equals(obj)){
+                throw new RelacionamentoException();
+            }
+        }
+
         tituloRepository.delete(obj);
-     
         return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
 }
