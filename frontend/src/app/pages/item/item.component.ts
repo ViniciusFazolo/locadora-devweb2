@@ -13,6 +13,7 @@ import { ItemService } from '../../services/item.service';
 import { Titulo } from '../../interfaces/titulo';
 import { TituloService } from '../../services/titulo.service';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Locacao } from '../../interfaces/locacao';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class ItemComponent implements OnInit{
   dtAquisicao: string = '';
   tipoItem: string = '';
   titulos: Titulo[] = [];
+  locacoes: Locacao[] = [];
 
   selectedTitulo!: Titulo;
 
@@ -40,7 +42,6 @@ export class ItemComponent implements OnInit{
   ngOnInit(): void {
     this.listAll();
     this.listAllTitulos();
-    console.log(this.titulos);
   }
 
   toggleDialog(){
@@ -121,6 +122,7 @@ export class ItemComponent implements OnInit{
       dtAquisicao: this.dtAquisicao,
       tipoItem: this.tipoItem,
       titulo: this.selectedTitulo,
+      locacoes: this.locacoes,
       id: this.itemToEdit?.id
     }
 
@@ -142,7 +144,8 @@ export class ItemComponent implements OnInit{
       numSerie: this.numSerie,
       dtAquisicao: this.dtAquisicao,
       tipoItem: this.tipoItem,
-      titulo: this.selectedTitulo
+      titulo: this.selectedTitulo,
+      locacoes: this.locacoes
     }
 
     this.itemService.create(obj).subscribe({
