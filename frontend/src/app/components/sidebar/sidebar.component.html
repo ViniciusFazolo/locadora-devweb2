@@ -49,6 +49,31 @@
                 <i class="pi pi-video mr-3"></i>
                 Título
             </a>
+
+            <a routerLink="/socio" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-user-plus mr-3"></i>
+                Sócio
+            </a>
+
+            <a routerLink="/dependente" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-users mr-3"></i>
+                Dependente
+            </a>
+
+            <a routerLink="/locacao" class="p-3 border-round-lg text-sm no-underline text-gray-700 hover:bg-blue-400 hover:text-white mb-1 transition-linear transition-duration-150 flex align-items-center"
+                [routerLinkActive]="'bg-blue-400 text-white'"
+                (click)="close()"
+                >
+                <i class="pi pi-shopping-bag mr-3"></i>
+                Locação
+            </a>
+
         </div>
     </p-sidebar>
 </div>
