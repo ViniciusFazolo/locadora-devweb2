@@ -10,7 +10,7 @@ import {
   BrowserAnimationsModule,
   provideAnimations,
 } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
 import ptBr from '@angular/common/locales/pt';
@@ -23,7 +23,7 @@ export const appConfig: ApplicationConfig = {
     BrowserModule,
     BrowserAnimationsModule,
     provideAnimations(),
-    provideHttpClient(),
+    provideHttpClient(withFetch()),
     {provide: LOCALE_ID, useValue: 'pt-br' }
   ],
 };
