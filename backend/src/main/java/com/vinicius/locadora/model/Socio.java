@@ -1,13 +1,11 @@
 package com.vinicius.locadora.model;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,22 +13,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Item {
-    
+public class Socio extends Cliente{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
-    private int numSerie;
-    private Date dtAquisicao;
-    private String tipoItem;
 
-    @ManyToOne
-    private Titulo titulo;
+    private String cpf;
+    private String endereco;
+    private String tel;
 
-    @OneToMany(mappedBy = "item")
-    private List<Locacao> locacao;
+    @OneToMany(mappedBy = "socio")
+    private List<Dependente> dependente;
 }
