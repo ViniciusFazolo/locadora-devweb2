@@ -2,6 +2,8 @@ package com.vinicius.locadora.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,5 +29,5 @@ public class Socio extends Cliente{
     private String tel;
 
     @OneToMany(mappedBy = "socio")
-    private List<Dependente> dependente;
+    private List<Dependente> dependentes;
 }

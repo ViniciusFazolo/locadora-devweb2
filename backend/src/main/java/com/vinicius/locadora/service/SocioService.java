@@ -20,7 +20,7 @@ public class SocioService{
     public ResponseEntity<Socio> salvar(Socio request) {
         Socio obj = new Socio();
         obj.setCpf(request.getCpf());
-        obj.setDependente(request.getDependente());
+        obj.setDependentes(request.getDependentes());
         obj.setDtNascimento(request.getDtNascimento());
         obj.setEndereco(request.getEndereco());
         obj.setEstahAtivo(request.getEstahAtivo());
@@ -47,7 +47,7 @@ public class SocioService{
     public ResponseEntity<Socio> atualizar(Socio request){
         Socio obj = socioRepository.findById(request.getId()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id: " + request.getId()));
         obj.setCpf(request.getCpf());
-        obj.setDependente(request.getDependente());
+        obj.setDependentes(request.getDependentes());
         obj.setDtNascimento(request.getDtNascimento());
         obj.setEndereco(request.getEndereco());
         obj.setEstahAtivo(request.getEstahAtivo());

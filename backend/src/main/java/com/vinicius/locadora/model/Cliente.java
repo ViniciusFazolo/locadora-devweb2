@@ -21,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public abstract class Cliente {
+public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
