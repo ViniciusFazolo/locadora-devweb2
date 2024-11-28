@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.vinicius.locadora.exceptions.CancelarLocacaoException;
 import com.vinicius.locadora.exceptions.ErroPadrao;
 import com.vinicius.locadora.exceptions.ItemNaoDisponivelException;
 import com.vinicius.locadora.exceptions.LimiteDeDependentesException;
@@ -74,6 +75,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
    
     @ExceptionHandler(ItemNaoDisponivelException.class)
     public ResponseEntity<ErroPadrao> ItemNaoDisponivelHandler(ItemNaoDisponivelException e, HttpServletRequest req) {
+        ErroPadrao err = new ErroPadrao();
+        err.setMessage(e.getMessage());
+        err.setPath(req.getRequestURI());
+        err.setStatus(HttpStatus.BAD_REQUEST.value());
+        err.setTimestamp(Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(CancelarLocacaoException.class)
+    public ResponseEntity<ErroPadrao> CancelarLocacaoHandler(CancelarLocacaoException e, HttpServletRequest req) {
         ErroPadrao err = new ErroPadrao();
         err.setMessage(e.getMessage());
         err.setPath(req.getRequestURI());
