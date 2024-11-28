@@ -48,4 +48,9 @@ public class LocacaoController {
     public ResponseEntity<String> deletar(@PathVariable int id){
         return locacaoService.deletar(id);
     }
+
+    @GetMapping("/cancelar")
+    public ResponseEntity<String> cancelar(@PathVariable int id){
+        return locacaoService.cancelar(id);
+    }
 }

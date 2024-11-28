@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.LocacaoRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.LocacaoResponseDTO;
+import com.vinicius.locadora.exceptions.CancelarLocacaoException;
 import com.vinicius.locadora.exceptions.ItemNaoDisponivelException;
 import com.vinicius.locadora.exceptions.LocacoesAtrasadasException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
@@ -52,6 +53,8 @@ public class LocacaoService{
                 throw new ItemNaoDisponivelException(lc.getDtDevolucaoPrevista());
             }
         });
+
+        // TODO: calcular o valor da locação e a data prevista de acordo com a classe. (perguntar o que sigifica a data prevista do model CLasse)
 
         Locacao obj = new Locacao();
         obj.setCliente(request.cliente());
@@ -117,5 +120,16 @@ public class LocacaoService{
         Locacao obj = locacaoRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + id));
         locacaoRepository.delete(obj);
         return ResponseEntity.ok().body("Registro excluído com sucesso");
+    }
+
+    public ResponseEntity<String> cancelar(int id){
+        Locacao obj = locacaoRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + id));
+    
+        if(obj.getValorCobrado() != null){
+            throw new CancelarLocacaoException();
+        }
+
+        locacaoRepository.deleteById(id);
+        return ResponseEntity.ok().body("Cancelado com sucesso");
     }
 }
