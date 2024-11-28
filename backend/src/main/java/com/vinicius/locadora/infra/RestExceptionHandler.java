@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.vinicius.locadora.exceptions.ErroPadrao;
+import com.vinicius.locadora.exceptions.ItemNaoDisponivelException;
 import com.vinicius.locadora.exceptions.LimiteDeDependentesException;
 import com.vinicius.locadora.exceptions.LocacoesAtrasadasException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
@@ -63,6 +64,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     
     @ExceptionHandler(LocacoesAtrasadasException.class)
     public ResponseEntity<ErroPadrao> LocacoesAtrasadasHandler(LocacoesAtrasadasException e, HttpServletRequest req) {
+        ErroPadrao err = new ErroPadrao();
+        err.setMessage(e.getMessage());
+        err.setPath(req.getRequestURI());
+        err.setStatus(HttpStatus.BAD_REQUEST.value());
+        err.setTimestamp(Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+   
+    @ExceptionHandler(ItemNaoDisponivelException.class)
+    public ResponseEntity<ErroPadrao> ItemNaoDisponivelHandler(ItemNaoDisponivelException e, HttpServletRequest req) {
         ErroPadrao err = new ErroPadrao();
         err.setMessage(e.getMessage());
         err.setPath(req.getRequestURI());
