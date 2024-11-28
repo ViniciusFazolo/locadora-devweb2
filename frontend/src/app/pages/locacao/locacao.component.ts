@@ -13,8 +13,11 @@ import { Locacao } from '../../interfaces/locacao';
 import { LocacaoService } from '../../services/locacao.service';
 import { Item } from '../../interfaces/item';
 import { Cliente } from '../../interfaces/cliente';
-import { ClienteService } from '../../services/cliente.service';
 import { ItemService } from '../../services/item.service';
+import { SocioService } from '../../services/socio.service';
+import { DependenteService } from '../../services/dependente.service';
+import { Socio } from '../../interfaces/socio';
+import { Dependente } from '../../interfaces/dependente';
 
 @Component({
   selector: 'app-locacao',
@@ -31,33 +34,39 @@ export class LocacaoComponent implements OnInit{
   items!:  Locacao[]
   itemToEdit!: Locacao | null;
   dataLocacao: string = '';
-  dataLocacaoPrevista: string = '';
+  dataDevolucaoPrevista: string = '';
   dataDevolucaoEfetiva: string = '';
   valorLocacao: number = 0;
   valorMulta: number = 0;
-  cliente: Cliente = {} as Cliente;
+  cliente: Socio | Dependente = {} as Socio | Dependente;
   item: Item = {} as Item;
   numeroSerie: number = 0;
 
   selectedCliente!: Cliente;
   clientes: Cliente[] = [];
 
+  socios: Socio[] = [];
+  dependentes: Dependente[] = [];
+
   selectedItem!: Item;
   itens: Item[] = [];
 
-  constructor(private messageService: MessageService, private locacaoService: LocacaoService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private clienteService: ClienteService, private itemService: ItemService) {}
+  constructor(private messageService: MessageService, private locacaoService: LocacaoService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private socioService: SocioService, private itemService: ItemService, private dependenteService: DependenteService) {}
 
   ngOnInit(): void {
     this.listAll();
+    this.listAllSocios();
+    this.listAllDependentes();
+    this.listAllItens();
   }
 
   toggleDialog(){
     this.dataLocacao = ''
-    this.dataLocacaoPrevista = ''
+    this.dataDevolucaoPrevista = ''
     this.dataDevolucaoEfetiva = ''
     this.valorLocacao = 0
     this.valorMulta = 0
-    this.cliente = {} as Cliente
+    this.cliente = {} as Socio | Dependente
     this.item = {} as Item
     this.isDialogOpen = !this.isDialogOpen
   }
@@ -78,13 +87,25 @@ export class LocacaoComponent implements OnInit{
     })
   }
 
-  listAllClientes(){
-    this.clienteService.listAll().subscribe({
+  listAllSocios(){
+    this.socioService.listAll().subscribe({
       next: (res) => {
-        this.clientes = res;
+        console.log(res);
+        this.socios = res;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar socios' });
+      }
+    })
+  }
+
+  listAllDependentes(){
+    this.dependenteService.listAll().subscribe({
+      next: (res) => {
+        this.dependentes = res;
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar dependentes' });
       }
     })
   }
@@ -95,7 +116,7 @@ export class LocacaoComponent implements OnInit{
         this.itens = res;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar itens' });
       }
     })
   }
@@ -109,7 +130,7 @@ export class LocacaoComponent implements OnInit{
   }
 
   handleSave(){
-    if(!this.dataLocacao || !this.dataDevolucaoEfetiva || !this.dataLocacaoPrevista || !this.valorLocacao || !this.valorMulta || !this.cliente || !this.item){
+    if(!this.dataLocacao || !this.dataDevolucaoEfetiva || !this.dataDevolucaoPrevista || !this.valorLocacao || !this.valorMulta || !this.cliente || !this.item){
       this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
       return
     }
@@ -126,7 +147,7 @@ export class LocacaoComponent implements OnInit{
       next: (res) => {
         this.itemToEdit = res
         this.dataLocacao = this.datePipe.transform(this.itemToEdit.dtLocacao, 'yyyy-MM-dd') || ''
-        this.dataLocacaoPrevista = this.datePipe.transform(this.itemToEdit.dtLocacaoPrevista, 'yyyy-MM-dd') || ''
+        this.dataDevolucaoPrevista = this.datePipe.transform(this.itemToEdit.dtDevolucaoPrevista, 'yyyy-MM-dd') || ''
         this.dataDevolucaoEfetiva = this.datePipe.transform(this.itemToEdit.dtDevolucaoEfetiva, 'yyyy-MM-dd') || ''
         this.valorLocacao = this.itemToEdit.valorCobrado;
         this.valorMulta = this.itemToEdit.multaCobrada;
@@ -156,7 +177,7 @@ export class LocacaoComponent implements OnInit{
     const obj: Locacao = {
       id: this.itemToEdit?.id,
       dtLocacao: this.dataLocacao,
-      dtLocacaoPrevista: this.dataLocacaoPrevista,
+      dtDevolucaoPrevista: this.dataDevolucaoPrevista,
       dtDevolucaoEfetiva: this.dataDevolucaoEfetiva,
       valorCobrado: this.valorLocacao,
       multaCobrada: this.valorMulta,
@@ -180,14 +201,14 @@ export class LocacaoComponent implements OnInit{
   create(){
     const obj: Locacao = {
       dtLocacao: this.dataLocacao,
-      dtLocacaoPrevista: this.dataLocacaoPrevista,
+      dtDevolucaoPrevista: this.dataDevolucaoPrevista,
       dtDevolucaoEfetiva: this.dataDevolucaoEfetiva,
       valorCobrado: this.valorLocacao,
       multaCobrada: this.valorMulta,
       cliente: this.selectedCliente,
       item: this.selectedItem
     }
-
+    console.log(obj);
     this.locacaoService.create(obj).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro inserido com sucesso', life: 3000 });

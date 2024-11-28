@@ -18,13 +18,13 @@
 
       <ng-template pTemplate="body" let-item>
           <tr>
-              <td>{{ item.dataLocacao | date: 'shortDate' }}</td>
-              <td>{{ item.dataLocacaoPrevista | date: 'shortDate' }}</td>
-              <td>{{ item.dataDevolucaoEfetiva | date: 'shortDate' }}</td>
-              <td>{{ item.valorLocacao }}</td>
-              <td>{{ item.valorMulta }}</td>
-              <td>{{ item.cliente }}</td>
-              <td>{{ item.item }}</td>
+              <td>{{ item.dtLocacao | date: 'shortDate' }}</td>
+              <td>{{ item.dtDevolucaoPrevista | date: 'shortDate' }}</td>
+              <td>{{ item.dtDevolucaoEfetiva | date: 'shortDate' }}</td>
+              <td>{{ item.valorCobrado }}</td>
+              <td>{{ item.multaCobrada }}</td>
+              <td>{{ item.cliente.nome }}</td>
+              <td>{{ item.item.numSerie }}</td>
                   <td>
                   <p-button label="Editar" icon="pi pi-pencil" size="small" class="mr-1" (onClick)="handleEdit(item.id!)"/>
                   <p-button label="Excluir"icon="pi pi-trash" size="small" severity="danger" (onClick)="handleDelete($event, item.id!)"/>
@@ -44,10 +44,10 @@
               </div>
 
               <div class="mb-3 w-full">
-                <label for="" class="block mb-2">Data de locação prevista: </label>
+                <label for="" class="block mb-2">Data de devolução prevista: </label>
                 <input
                   type="date"
-                  [(ngModel)]="dataLocacaoPrevista"
+                  [(ngModel)]="dataDevolucaoPrevista"
                   [ngModelOptions]="{ standalone: true }"
                   class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                 />
@@ -57,7 +57,7 @@
                 <label for="" class="block mb-2">Data de devolução efetiva: </label>
                 <input
                   type="date"
-                  [(ngModel)]="dataLocacaoPrevista"
+                  [(ngModel)]="dataDevolucaoEfetiva"
                   [ngModelOptions]="{ standalone: true }"
                   class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                 />
@@ -67,7 +67,7 @@
                 <label for="" class="block mb-2">Valor cobrado: </label>
                 <input
                   type="number"
-                  [(ngModel)]="dataLocacaoPrevista"
+                  [(ngModel)]="valorLocacao"
                   [ngModelOptions]="{ standalone: true }"
                   class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                 />
@@ -77,7 +77,7 @@
                 <label for="" class="block mb-2">Multa cobrada: </label>
                 <input
                   type="number"
-                  [(ngModel)]="dataLocacaoPrevista"
+                  [(ngModel)]="valorMulta"
                   [ngModelOptions]="{ standalone: true }"
                   class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                 />
@@ -86,7 +86,8 @@
               <div class="mb-3 w-full">
                 <label for="cliente" class="block mb-2">Cliente</label>
                 <select name="cliente" [(ngModel)]="selectedCliente" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-                  <option *ngFor="let cliente of clientes" [ngValue]="cliente">{{ cliente.nome }}</option>
+                  <option *ngFor="let socio of socios" [ngValue]="socio">{{ socio.nome }}</option>
+                  <option *ngFor="let dependente of dependentes" [ngValue]="dependente">{{ dependente.nome }}</option>
                 </select>
               </div>
 

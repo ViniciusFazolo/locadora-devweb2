@@ -1,10 +1,12 @@
 import { Cliente } from "./cliente"
+import { Dependente } from "./dependente"
 import { Item } from "./item"
+import { Socio } from "./socio"
 
 export interface Locacao{
   id?: number,
   dtLocacao: string,
-  dtLocacaoPrevista: string,
+  dtDevolucaoPrevista: string,
   dtDevolucaoEfetiva: string,
   valorCobrado: number,
   multaCobrada: number,
