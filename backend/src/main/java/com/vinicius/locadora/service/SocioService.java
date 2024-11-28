@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import com.vinicius.locadora.model.Socio;
 import com.vinicius.locadora.exceptions.LimiteDeDependentesException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
+import com.vinicius.locadora.exceptions.RelacionamentoException;
+import com.vinicius.locadora.repository.DependenteRepository;
+import com.vinicius.locadora.repository.LocacaoRepository;
 import com.vinicius.locadora.repository.SocioRepository;
 
 @Service
@@ -17,6 +20,12 @@ public class SocioService{
     
     @Autowired
     private SocioRepository socioRepository;
+
+    @Autowired
+    private DependenteRepository dependenteRepository;
+
+    @Autowired
+    private LocacaoRepository locacaoRepository;
 
     public ResponseEntity<Socio> salvar(Socio request) {
         Socio obj = new Socio();
@@ -87,8 +96,16 @@ public class SocioService{
 
     public ResponseEntity<String> deletar(int id){
         Socio obj = socioRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id:" + id));
+        
+        obj.getLocacao().forEach((lc) -> {
+            if(lc.getDtDevolucaoEfetiva() == null){
+                throw new RelacionamentoException("Não é possivel excluir o cliente, " + obj.getNome() + ". Há locações realizadas que ainda não foram entregues.");
+            }
+        });
+        
+        locacaoRepository.deleteAll(obj.getLocacao());
+        dependenteRepository.deleteAll(obj.getDependente());
         socioRepository.delete(obj);
-     
         return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
 }
