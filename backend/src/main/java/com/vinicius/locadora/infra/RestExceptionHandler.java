@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.vinicius.locadora.exceptions.ErroPadrao;
+import com.vinicius.locadora.exceptions.LimiteDeDependentesException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.exceptions.RelacionamentoException;
@@ -41,6 +42,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RelacionamentoException.class)
     public ResponseEntity<ErroPadrao> RelacionamentoTituloHandler(RelacionamentoException e, HttpServletRequest req) {
+        ErroPadrao err = new ErroPadrao();
+        err.setMessage(e.getMessage());
+        err.setPath(req.getRequestURI());
+        err.setStatus(HttpStatus.BAD_REQUEST.value());
+        err.setTimestamp(Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(LimiteDeDependentesException.class)
+    public ResponseEntity<ErroPadrao> LimiteDeDependentesHandler(LimiteDeDependentesException e, HttpServletRequest req) {
         ErroPadrao err = new ErroPadrao();
         err.setMessage(e.getMessage());
         err.setPath(req.getRequestURI());
