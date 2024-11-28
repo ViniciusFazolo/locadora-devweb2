@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.LocacaoRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.LocacaoResponseDTO;
+import com.vinicius.locadora.exceptions.ItemNaoDisponivelException;
 import com.vinicius.locadora.exceptions.LocacoesAtrasadasException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
@@ -45,6 +46,13 @@ public class LocacaoService{
             throw new LocacoesAtrasadasException(msg.toString());
         }
 
+        List<Locacao> locacoes = locacaoRepository.findAll();
+        locacoes.forEach((lc) -> {
+            if(lc.getDtDevolucaoEfetiva() == null && lc.getItem().equals(request.item())){
+                throw new ItemNaoDisponivelException(lc.getDtDevolucaoPrevista());
+            }
+        });
+
         Locacao obj = new Locacao();
         obj.setCliente(request.cliente());
         obj.setDtDevolucaoEfetiva(request.dtDevolucaoEfetiva());
@@ -74,6 +82,13 @@ public class LocacaoService{
         ){
             throw new PreencherTodosCamposException();
         }
+
+        List<Locacao> locacoes = locacaoRepository.findAll();
+        locacoes.forEach((lc) -> {
+            if(lc.getDtDevolucaoEfetiva() == null && lc.getItem().equals(request.item())){
+                throw new ItemNaoDisponivelException(lc.getDtDevolucaoPrevista());
+            }
+        });
 
         Locacao obj = locacaoRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + request.id()));
         obj.setCliente(request.cliente());
