@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.model.Socio;
+import com.vinicius.locadora.exceptions.LimiteDeDependentesException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.repository.SocioRepository;
 
@@ -20,7 +21,6 @@ public class SocioService{
     public ResponseEntity<Socio> salvar(Socio request) {
         Socio obj = new Socio();
         obj.setCpf(request.getCpf());
-        obj.setDependente(request.getDependente());
         obj.setDtNascimento(request.getDtNascimento());
         obj.setEndereco(request.getEndereco());
         obj.setEstahAtivo(request.getEstahAtivo());
@@ -29,8 +29,14 @@ public class SocioService{
         obj.setNumInscricao(request.getNumInscricao());
         obj.setSexo(request.getSexo());
         obj.setTel(request.getTel());
+        
+        if(request.getDependente().size() > 3){
+            throw new LimiteDeDependentesException();
+        }
+      
+        obj.setDependente(request.getDependente());
+        
         obj = socioRepository.save(obj);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(obj);
     }
 
@@ -47,7 +53,6 @@ public class SocioService{
     public ResponseEntity<Socio> atualizar(Socio request){
         Socio obj = socioRepository.findById(request.getId()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar o ator de id: " + request.getId()));
         obj.setCpf(request.getCpf());
-        obj.setDependente(request.getDependente());
         obj.setDtNascimento(request.getDtNascimento());
         obj.setEndereco(request.getEndereco());
         obj.setEstahAtivo(request.getEstahAtivo());
@@ -57,6 +62,12 @@ public class SocioService{
         obj.setSexo(request.getSexo());
         obj.setTel(request.getTel());
         obj = socioRepository.save(obj);
+
+        if(request.getDependente().size() > 3){
+            throw new LimiteDeDependentesException();
+        }
+      
+        obj.setDependente(request.getDependente());
         
         socioRepository.save(obj);
 
