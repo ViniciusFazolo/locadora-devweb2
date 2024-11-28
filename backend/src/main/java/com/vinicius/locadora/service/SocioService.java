@@ -23,7 +23,7 @@ public class SocioService{
         obj.setDependente(request.getDependente());
         obj.setDtNascimento(request.getDtNascimento());
         obj.setEndereco(request.getEndereco());
-        obj.setEstahAtivo(request.getEstahAtivo());
+        obj.setEstahAtivo(true);
         obj.setLocacao(request.getLocacao());
         obj.setNome(request.getNome());
         obj.setNumInscricao(request.getNumInscricao());
