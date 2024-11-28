@@ -33,6 +33,12 @@ public class SocioService{
         if(request.getDependente().size() > 3){
             throw new LimiteDeDependentesException();
         }
+
+        if(obj.getEstahAtivo() == false){
+            request.getDependente().forEach((dp) -> {
+                dp.setEstahAtivo(false);
+            });
+        }
       
         obj.setDependente(request.getDependente());
         
@@ -66,11 +72,16 @@ public class SocioService{
         if(request.getDependente().size() > 3){
             throw new LimiteDeDependentesException();
         }
+
+        if(obj.getEstahAtivo() == false){
+            request.getDependente().forEach((dp) -> {
+                dp.setEstahAtivo(false);
+            });
+        }
       
         obj.setDependente(request.getDependente());
         
         socioRepository.save(obj);
-
         return ResponseEntity.ok().body(obj);
     }
 
