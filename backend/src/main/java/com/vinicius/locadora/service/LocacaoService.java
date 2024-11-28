@@ -83,6 +83,17 @@ public class LocacaoService{
             throw new PreencherTodosCamposException();
         }
 
+        StringBuilder msg = new StringBuilder();
+        request.cliente().getLocacao().forEach((lc) -> {
+            if(lc.getDtDevolucaoEfetiva().isAfter(lc.getDtDevolucaoPrevista()) && !lc.getDtDevolucaoPrevista().isEqual(lc.getDtDevolucaoEfetiva())){
+                msg.append("\nid: " + lc.getId() + " - " + "Devolução prevista: " + lc.getDtDevolucaoPrevista() + " - " + "dias atrasados: " + ChronoUnit.DAYS.between(lc.getDtDevolucaoPrevista(), lc.getDtDevolucaoEfetiva()));
+            }
+        }); 
+
+        if(!msg.isEmpty()){
+            throw new LocacoesAtrasadasException(msg.toString());
+        }
+
         List<Locacao> locacoes = locacaoRepository.findAll();
         locacoes.forEach((lc) -> {
             if(lc.getDtDevolucaoEfetiva() == null && lc.getItem().equals(request.item())){
