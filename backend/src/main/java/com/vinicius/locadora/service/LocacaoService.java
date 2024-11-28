@@ -1,5 +1,6 @@
 package com.vinicius.locadora.service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.vinicius.locadora.DTO.RequestDTO.LocacaoRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.LocacaoResponseDTO;
+import com.vinicius.locadora.exceptions.LocacoesAtrasadasException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.LocacaoMapper;
@@ -30,6 +32,17 @@ public class LocacaoService{
             request.valorCobrado() == null || request.multaCobrada() == null || request.cliente() == null || request.item() == null
         ){
             throw new PreencherTodosCamposException();
+        }
+
+        StringBuilder msg = new StringBuilder();
+        request.cliente().getLocacao().forEach((lc) -> {
+            if(lc.getDtDevolucaoEfetiva().isAfter(lc.getDtDevolucaoPrevista()) && !lc.getDtDevolucaoPrevista().isEqual(lc.getDtDevolucaoEfetiva())){
+                msg.append("\nid: " + lc.getId() + " - " + "Devolução prevista: " + lc.getDtDevolucaoPrevista() + " - " + "dias atrasados: " + ChronoUnit.DAYS.between(lc.getDtDevolucaoPrevista(), lc.getDtDevolucaoEfetiva()));
+            }
+        }); 
+
+        if(!msg.isEmpty()){
+            throw new LocacoesAtrasadasException(msg.toString());
         }
 
         Locacao obj = new Locacao();
