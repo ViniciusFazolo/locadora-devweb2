@@ -2,6 +2,8 @@ package com.vinicius.locadora.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,9 +30,11 @@ public class Locacao {
     private Double valorCobrado;
     private Double multaCobrada;
 
+    @JsonIgnore
     @ManyToOne
     private Cliente cliente;
     
+    @JsonIgnore
     @ManyToOne
     private Item item;
 }

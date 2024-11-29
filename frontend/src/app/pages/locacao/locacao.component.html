@@ -1,0 +1,121 @@
+<app-layout-base [title]="'Listagem de locações'" [btnTitle]="'Novo'" (toggleDialog)="toggleDialog()">
+  <p-button label="Devolução" icon="pi pi-refresh" class="ml-2" (click)="toggleDevolucaoDialog()" />
+  <p-toast />
+  <p-confirmPopup />
+  <p-table [value]="items" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+          <tr>
+              <th>Data de Locação</th>
+              <th>Data de Locação Prevista</th>
+              <th>Data de Devolução Efetiva</th>
+              <th>Valor cobrado</th>
+              <th>Multa cobrada</th>
+              <th>Cliente</th>
+              <th>Item</th>
+              <th>Ações</th>
+          </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+          <tr>
+              <td>{{ item.dtLocacao | date: 'shortDate' }}</td>
+              <td>{{ item.dtDevolucaoPrevista | date: 'shortDate' }}</td>
+              <td>{{ item.dtDevolucaoEfetiva | date: 'shortDate' }}</td>
+              <td>{{ item.valorCobrado }}</td>
+              <td>{{ item.multaCobrada }}</td>
+              <td>{{ item.cliente.nome }}</td>
+              <td>{{ item.item.numSerie }}</td>
+                  <td>
+                  <p-button label="Editar" icon="pi pi-pencil" size="small" class="mr-1" (onClick)="handleEdit(item.id!)"/>
+                  <p-button label="Excluir"icon="pi pi-trash" size="small" severity="danger" (onClick)="handleDelete($event, item.id!)"/>
+              </td>
+          </tr>
+      </ng-template>
+  </p-table>
+
+  @if (isDialogOpen) {
+      <app-dialog [visible]="isDialogOpen" (closeDialog)="toggleDialog()" [header]="itemToEdit ? 'Editar locação' : 'Nova Locação'">
+          <form (ngSubmit)="handleSave()">
+              <div class="mb-3 w-full">
+                  <label for="" class="block mb-2">Data de locação:</label>
+                  <input type="date" name="dataLocacao"
+                      class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                      [(ngModel)]="dataLocacao" [ngModelOptions]="{standalone: true}">
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="" class="block mb-2">Data de devolução prevista: </label>
+                <input
+                  type="date"
+                  [(ngModel)]="dataDevolucaoPrevista"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                />
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="" class="block mb-2">Data de devolução efetiva: </label>
+                <input
+                  type="date"
+                  [(ngModel)]="dataDevolucaoEfetiva"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                />
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="" class="block mb-2">Valor cobrado: </label>
+                <input
+                  type="number"
+                  [(ngModel)]="valorLocacao"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                />
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="" class="block mb-2">Multa cobrada: </label>
+                <input
+                  type="number"
+                  [(ngModel)]="valorMulta"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                />
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="cliente" class="block mb-2">Cliente</label>
+                <select name="cliente" [(ngModel)]="selectedCliente" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                  <option *ngFor="let socio of socios" [ngValue]="socio">{{ socio.nome }}</option>
+                  <option *ngFor="let dependente of dependentes" [ngValue]="dependente">{{ dependente.nome }}</option>
+                </select>
+              </div>
+
+              <div class="mb-3 w-full">
+                <label for="item" class="block mb-2">Item</label>
+                <select name="item" [(ngModel)]="selectedItem" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                  <option *ngFor="let item of itens" [ngValue]="item">{{ item.numSerie }}</option>
+                </select>
+              </div>
+
+              <p-button label="Salvar" type="submit" severity="success" icon="pi pi-save" />
+          </form>
+      </app-dialog>
+  }
+
+  @if (isDialogDevolucaoOpen){
+    <app-dialog [visible]="isDialogDevolucaoOpen" (closeDialog)="toggleDevolucaoDialog()" [header]="tituloDevolucao">
+      <form (ngSubmit)="handleDevolucao()">
+          <div class="mb-3 w-full">
+              <label for="" class="block mb-2">Número de série do item:</label>
+              <input type="number" name="numSerie"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                  [(ngModel)]="numeroSerie" [ngModelOptions]="{standalone: true}">
+          </div>
+
+          <p-button label="Registrar Devolução" type="submit" severity="success" icon="pi pi-save" />
+      </form>
+  </app-dialog>
+  }
+</app-layout-base>
+

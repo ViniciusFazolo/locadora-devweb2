@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutBaseComponent } from "../../components/layout-base/layout-base.component";
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -7,74 +8,62 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { DialogComponent } from '../../components/dialog/dialog.component';
-import { Item } from '../../interfaces/item';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ItemService } from '../../services/item.service';
-import { Titulo } from '../../interfaces/titulo';
-import { TituloService } from '../../services/titulo.service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { SocioService } from '../../services/socio.service';
+import { Socio } from '../../interfaces/socio';
+import { Dependente } from '../../interfaces/dependente';
 import { Locacao } from '../../interfaces/locacao';
 
-
 @Component({
-  selector: 'app-item',
+  selector: 'app-socio',
   standalone: true,
   imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule, DatePipe],
   providers: [MessageService, ConfirmationService, DatePipe],
-  templateUrl: './item.component.html',
+  templateUrl: './socio.component.html',
   styles: ``
 })
-export class ItemComponent implements OnInit{
+export class SocioComponent implements OnInit{
   isDialogOpen: boolean = false;
-  items!:  Item[]
-  itemToEdit!: Item | null;
-  numSerie: number = 0;
-  dtAquisicao: string = '';
-  tipoItem: string = '';
-  titulos: Titulo[] = [];
+  items!: Socio[];
+  itemToEdit!: Socio | null;
+  socio: string = '';
+  numInscricao: number = 0;
+  dtNascimento: string = '';
+  sexo: string = '';
+  estahAtivo: boolean = true;
+  cpf: string = '';
+  endereco: string = '';
+  tel: number = 0;
+  dependentes: Dependente[] = [];
   locacoes: Locacao[] = [];
 
-  selectedTitulo!: Titulo;
-
-  constructor(private messageService: MessageService, private itemService: ItemService, private confirmationService: ConfirmationService, private tituloService: TituloService, private datePipe: DatePipe) {}
-
+  constructor(private messageService: MessageService, private socioService: SocioService, private confirmationService: ConfirmationService, private datePipe: DatePipe) {}
 
   ngOnInit(): void {
     this.listAll();
-    this.listAllTitulos();
   }
 
   toggleDialog(){
-    this.numSerie = 0
-    this.dtAquisicao = ''
-    this.tipoItem = ''
+    this.socio = ''
+    this.numInscricao = 0
+    this.dtNascimento = ''
+    this.sexo = ''
     this.isDialogOpen = !this.isDialogOpen
   }
 
   listAll(){
-    this.itemService.listAll().subscribe({
+    this.socioService.listAll().subscribe({
       next: (res) => {
         this.items = res;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar itens' });
-      }
-    })
-  }
-
-  listAllTitulos(){
-    this.tituloService.listAll().subscribe({
-      next: (res) => {
-        this.titulos = res;
-      },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar socios' });
       }
     })
   }
 
   handleSave(){
-    if(!this.numSerie || !this.dtAquisicao || !this.tipoItem){
+    if(!this.socio || !this.numInscricao || !this.dtNascimento || !this.sexo){
       this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
       return
     }
@@ -87,19 +76,18 @@ export class ItemComponent implements OnInit{
   }
 
   handleEdit(id: number){
-    this.itemService.listById(id).subscribe({
+    this.socioService.listById(id).subscribe({
       next: (res) => {
         this.itemToEdit = res
-        this.numSerie = this.itemToEdit.numSerie;
-        this.dtAquisicao = this.datePipe.transform(this.itemToEdit.dtAquisicao, 'yyyy-MM-dd') || ''
-        this.tipoItem = this.itemToEdit.tipoItem;
-        this.selectedTitulo = this.itemToEdit.titulo;
+        this.socio = this.itemToEdit.nome;
+        this.numInscricao = this.itemToEdit.numInscricao;
+        this.dtNascimento = this.datePipe.transform(this.itemToEdit.dtNascimento, 'yyyy-MM-dd') || ''
+        this.sexo = this.itemToEdit.sexo;
+        this.estahAtivo = this.itemToEdit.estahAtivo;
         this.isDialogOpen = true
-
-        console.log('Título selecionado:', this.selectedTitulo);
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao editar item' });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao editar sócio' });
       }
     })
   }
@@ -117,16 +105,21 @@ export class ItemComponent implements OnInit{
   }
 
   edit(){
-    const obj: Item = {
-      numSerie: this.numSerie,
-      dtAquisicao: this.dtAquisicao,
-      tipoItem: this.tipoItem,
-      titulo: this.selectedTitulo,
+    const obj: Socio = {
+      nome: this.socio,
+      numInscricao: this.numInscricao,
+      dtNascimento: this.dtNascimento,
+      sexo: this.sexo,
+      estahAtivo: this.estahAtivo,
+      cpf: this.cpf,
+      endereco: this.endereco,
+      tel: this.tel,
+      dependentes: this.dependentes,
       locacoes: this.locacoes,
       id: this.itemToEdit?.id
     }
 
-    this.itemService.update(obj).subscribe({
+    this.socioService.update(obj).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro atualizado com sucesso', life: 3000 });
         this.itemToEdit = null
@@ -140,15 +133,20 @@ export class ItemComponent implements OnInit{
   }
 
   create(){
-    const obj: Item = {
-      numSerie: this.numSerie,
-      dtAquisicao: this.dtAquisicao,
-      tipoItem: this.tipoItem,
-      titulo: this.selectedTitulo,
+    const obj: Socio = {
+      nome: this.socio,
+      numInscricao: this.numInscricao,
+      dtNascimento: this.dtNascimento,
+      sexo: this.sexo,
+      estahAtivo: this.estahAtivo,
+      cpf: this.cpf,
+      endereco: this.endereco,
+      tel: this.tel,
+      dependentes: this.dependentes,
       locacoes: this.locacoes
     }
 
-    this.itemService.create(obj).subscribe({
+    this.socioService.create(obj).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro inserido com sucesso', life: 3000 });
         this.listAll()
@@ -161,7 +159,7 @@ export class ItemComponent implements OnInit{
   }
 
   delete(id: number){
-    this.itemService.delete(id).subscribe({
+    this.socioService.delete(id).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro excluído com sucesso', life: 3000 });
         this.listAll()

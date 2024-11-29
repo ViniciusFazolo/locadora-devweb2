@@ -6,6 +6,9 @@ import { DiretorComponent } from './pages/diretor/diretor.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ItemComponent } from './pages/item/item.component';
 import { TituloComponent } from './pages/titulo/titulo.component';
+import { SocioComponent } from './pages/socio/socio.component';
+import { DependenteComponent } from './pages/dependente/dependente.component';
+import { LocacaoComponent } from './pages/locacao/locacao.component';
 
 export const routes: Routes = [
     {
@@ -31,6 +34,18 @@ export const routes: Routes = [
     {
       path: 'titulo',
       component: TituloComponent
+    },
+    {
+      path: 'socio',
+      component: SocioComponent
+    },
+    {
+      path: 'dependente',
+      component: DependenteComponent
+    },
+    {
+      path: 'locacao',
+      component: LocacaoComponent
     },
     {
         path: '**',

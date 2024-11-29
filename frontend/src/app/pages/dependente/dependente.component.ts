@@ -1,5 +1,6 @@
+import { Dependente } from './../../interfaces/dependente';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { LayoutBaseComponent } from "../../components/layout-base/layout-base.component";
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -7,65 +8,68 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { DialogComponent } from '../../components/dialog/dialog.component';
-import { Item } from '../../interfaces/item';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ItemService } from '../../services/item.service';
-import { Titulo } from '../../interfaces/titulo';
-import { TituloService } from '../../services/titulo.service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { LayoutBaseComponent } from '../../components/layout-base/layout-base.component';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { DependenteService } from '../../services/dependente.service';
+import { Socio } from '../../interfaces/socio';
 import { Locacao } from '../../interfaces/locacao';
-
+import { SocioService } from '../../services/socio.service';
 
 @Component({
-  selector: 'app-item',
+  selector: 'app-dependente',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule, DatePipe],
+  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule],
   providers: [MessageService, ConfirmationService, DatePipe],
-  templateUrl: './item.component.html',
+  templateUrl: './dependente.component.html',
   styles: ``
 })
-export class ItemComponent implements OnInit{
+export class DependenteComponent implements OnInit{
   isDialogOpen: boolean = false;
-  items!:  Item[]
-  itemToEdit!: Item | null;
-  numSerie: number = 0;
-  dtAquisicao: string = '';
-  tipoItem: string = '';
-  titulos: Titulo[] = [];
+  items!: Dependente[]
+  itemToEdit!: Dependente | null;
+  dependente: string = ''
+  numInscricao: number = 0;
+  dtNascimento: string = '';
+  sexo: string = '';
+  estahAtivo: boolean = true;
+  socio: Socio = {} as Socio
   locacoes: Locacao[] = [];
 
-  selectedTitulo!: Titulo;
+  selectedSocio!: Socio;
+  socios: Socio[] = [];
 
-  constructor(private messageService: MessageService, private itemService: ItemService, private confirmationService: ConfirmationService, private tituloService: TituloService, private datePipe: DatePipe) {}
-
+  constructor(private messageService: MessageService, private dependenteService: DependenteService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private socioService: SocioService) {}
 
   ngOnInit(): void {
     this.listAll();
-    this.listAllTitulos();
+    this.listAllSocios();
   }
 
   toggleDialog(){
-    this.numSerie = 0
-    this.dtAquisicao = ''
-    this.tipoItem = ''
+    this.dependente = ''
+    this.numInscricao = 0
+    this.dtNascimento = ''
+    this.sexo = ''
+    this.estahAtivo = true
+    this.socio = {} as Socio
     this.isDialogOpen = !this.isDialogOpen
   }
 
   listAll(){
-    this.itemService.listAll().subscribe({
+    this.dependenteService.listAll().subscribe({
       next: (res) => {
         this.items = res;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar itens' });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar dependentes' });
       }
     })
   }
 
-  listAllTitulos(){
-    this.tituloService.listAll().subscribe({
+  listAllSocios(){
+    this.socioService.listAll().subscribe({
       next: (res) => {
-        this.titulos = res;
+        this.socios = res;
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
@@ -74,7 +78,7 @@ export class ItemComponent implements OnInit{
   }
 
   handleSave(){
-    if(!this.numSerie || !this.dtAquisicao || !this.tipoItem){
+    if(!this.dependente || !this.numInscricao || !this.dtNascimento || !this.sexo || !this.socio){
       this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
       return
     }
@@ -87,19 +91,19 @@ export class ItemComponent implements OnInit{
   }
 
   handleEdit(id: number){
-    this.itemService.listById(id).subscribe({
+    this.dependenteService.listById(id).subscribe({
       next: (res) => {
         this.itemToEdit = res
-        this.numSerie = this.itemToEdit.numSerie;
-        this.dtAquisicao = this.datePipe.transform(this.itemToEdit.dtAquisicao, 'yyyy-MM-dd') || ''
-        this.tipoItem = this.itemToEdit.tipoItem;
-        this.selectedTitulo = this.itemToEdit.titulo;
+        this.dependente = this.itemToEdit.nome;
+        this.numInscricao = this.itemToEdit.numInscricao;
+        this.dtNascimento = this.datePipe.transform(this.itemToEdit.dtNascimento, 'yyyy-MM-dd') || ''
+        this.sexo = this.itemToEdit.sexo;
+        this.estahAtivo = this.itemToEdit.estahAtivo;
+        this.selectedSocio = this.itemToEdit.socio;
         this.isDialogOpen = true
-
-        console.log('Título selecionado:', this.selectedTitulo);
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao editar item' });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao editar ator' });
       }
     })
   }
@@ -117,16 +121,18 @@ export class ItemComponent implements OnInit{
   }
 
   edit(){
-    const obj: Item = {
-      numSerie: this.numSerie,
-      dtAquisicao: this.dtAquisicao,
-      tipoItem: this.tipoItem,
-      titulo: this.selectedTitulo,
+    const obj: Dependente = {
+      nome: this.dependente,
+      numInscricao: this.numInscricao,
+      dtNascimento: this.dtNascimento,
+      sexo: this.sexo,
+      estahAtivo: this.estahAtivo,
+      socio: this.selectedSocio,
       locacoes: this.locacoes,
       id: this.itemToEdit?.id
     }
 
-    this.itemService.update(obj).subscribe({
+    this.dependenteService.update(obj).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro atualizado com sucesso', life: 3000 });
         this.itemToEdit = null
@@ -140,15 +146,17 @@ export class ItemComponent implements OnInit{
   }
 
   create(){
-    const obj: Item = {
-      numSerie: this.numSerie,
-      dtAquisicao: this.dtAquisicao,
-      tipoItem: this.tipoItem,
-      titulo: this.selectedTitulo,
-      locacoes: this.locacoes
+    const obj: Dependente = {
+      nome: this.dependente,
+      numInscricao: this.numInscricao,
+      dtNascimento: this.dtNascimento,
+      sexo: this.sexo,
+      estahAtivo: this.estahAtivo,
+      locacoes: this.locacoes,
+      socio: this.selectedSocio,
     }
 
-    this.itemService.create(obj).subscribe({
+    this.dependenteService.create(obj).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro inserido com sucesso', life: 3000 });
         this.listAll()
@@ -161,7 +169,7 @@ export class ItemComponent implements OnInit{
   }
 
   delete(id: number){
-    this.itemService.delete(id).subscribe({
+    this.dependenteService.delete(id).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro excluído com sucesso', life: 3000 });
         this.listAll()
