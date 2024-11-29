@@ -38,8 +38,15 @@ public class SocioService{
         obj.setNumInscricao(request.getNumInscricao());
         obj.setSexo(request.getSexo());
         obj.setTel(request.getTel());
+
+        int[] i = new int[1];
+        request.getDependente().forEach(dp -> {
+            if(dp.getEstahAtivo()){
+              i[0]++;  
+            }
+        });
         
-        if(request.getDependente().size() > 3){
+        if(i[0] > 3){
             throw new LimiteDeDependentesException();
         }
 
@@ -78,7 +85,14 @@ public class SocioService{
         obj.setTel(request.getTel());
         obj = socioRepository.save(obj);
 
-        if(request.getDependente().size() > 3){
+        int[] i = new int[1];
+        request.getDependente().forEach(dp -> {
+            if(dp.getEstahAtivo()){
+              i[0]++;  
+            }
+        });
+        
+        if(i[0] > 3){
             throw new LimiteDeDependentesException();
         }
 
