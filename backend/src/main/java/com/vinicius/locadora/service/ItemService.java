@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.vinicius.locadora.DTO.RequestDTO.ItemRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.ItemResponseDTO;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
+import com.vinicius.locadora.exceptions.PadraoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.exceptions.RelacionamentoException;
 import com.vinicius.locadora.mapper.ItemMapper;
@@ -35,13 +37,18 @@ public class ItemService{
         if(request.numSerie() == 0 || request.dtAquisicao().equals("") || request.dtAquisicao() == null || request.tipoItem().isBlank() || request.tipoItem() == null){
             throw new PreencherTodosCamposException();
         }
-        
+
         Item obj = new Item();
         obj.setNumSerie(request.numSerie());
         obj.setDtAquisicao(request.dtAquisicao());
         obj.setTipoItem(request.tipoItem());
         obj.setTitulo(request.titulo());
-        obj = itemRepository.save(obj);
+
+        try{
+            obj = itemRepository.save(obj);
+        }catch(DataIntegrityViolationException e){
+            throw new PadraoException("Esse número de série ja foi cadastrado");
+        }
       
         return ResponseEntity.status(HttpStatus.CREATED).body(itemMapper.toDTO(obj));
     }
