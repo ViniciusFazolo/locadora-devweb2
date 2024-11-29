@@ -14,6 +14,7 @@ import com.vinicius.locadora.exceptions.ItemNaoDisponivelException;
 import com.vinicius.locadora.exceptions.LimiteDeDependentesException;
 import com.vinicius.locadora.exceptions.LocacoesAtrasadasException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
+import com.vinicius.locadora.exceptions.PadraoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.exceptions.RelacionamentoException;
 
@@ -85,6 +86,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CancelarLocacaoException.class)
     public ResponseEntity<ErroPadrao> CancelarLocacaoHandler(CancelarLocacaoException e, HttpServletRequest req) {
+        ErroPadrao err = new ErroPadrao();
+        err.setMessage(e.getMessage());
+        err.setPath(req.getRequestURI());
+        err.setStatus(HttpStatus.BAD_REQUEST.value());
+        err.setTimestamp(Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+    
+    @ExceptionHandler(PadraoException.class)
+    public ResponseEntity<ErroPadrao> PadraoExceptionHandler(PadraoException e, HttpServletRequest req) {
         ErroPadrao err = new ErroPadrao();
         err.setMessage(e.getMessage());
         err.setPath(req.getRequestURI());
