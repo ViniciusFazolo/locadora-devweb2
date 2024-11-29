@@ -1,6 +1,5 @@
 package com.vinicius.locadora.model;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +25,7 @@ public class Classe {
     private int id;
     private String nome;
     private Double valor;
-    private Date prazoDevolucao; 
+    private Integer prazoDevolucao; 
 
     @OneToMany(mappedBy = "classe")
     @JsonIgnore
