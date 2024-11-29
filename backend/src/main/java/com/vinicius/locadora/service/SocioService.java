@@ -40,7 +40,7 @@ public class SocioService{
         obj.setTel(request.getTel());
 
         int[] i = new int[1];
-        request.getDependente().forEach(dp -> {
+        request.getDependentes().forEach(dp -> {
             if(dp.getEstahAtivo()){
               i[0]++;  
             }
@@ -51,12 +51,12 @@ public class SocioService{
         }
 
         if(obj.getEstahAtivo() == false){
-            request.getDependente().forEach((dp) -> {
+            request.getDependentes().forEach((dp) -> {
                 dp.setEstahAtivo(false);
             });
         }
       
-        obj.setDependente(request.getDependente());
+        obj.setDependentes(request.getDependentes());
         
         obj = socioRepository.save(obj);
         return ResponseEntity.status(HttpStatus.CREATED).body(obj);
@@ -86,7 +86,7 @@ public class SocioService{
         obj = socioRepository.save(obj);
 
         int[] i = new int[1];
-        request.getDependente().forEach(dp -> {
+        request.getDependentes().forEach(dp -> {
             if(dp.getEstahAtivo()){
               i[0]++;  
             }
@@ -97,12 +97,12 @@ public class SocioService{
         }
 
         if(obj.getEstahAtivo() == false){
-            request.getDependente().forEach((dp) -> {
+            request.getDependentes().forEach((dp) -> {
                 dp.setEstahAtivo(false);
             });
         }
       
-        obj.setDependente(request.getDependente());
+        obj.setDependentes(request.getDependentes());
         
         socioRepository.save(obj);
         return ResponseEntity.ok().body(obj);
@@ -118,7 +118,7 @@ public class SocioService{
         });
         
         locacaoRepository.deleteAll(obj.getLocacao());
-        dependenteRepository.deleteAll(obj.getDependente());
+        dependenteRepository.deleteAll(obj.getDependentes());
         socioRepository.delete(obj);
         return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
