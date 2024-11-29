@@ -1,5 +1,6 @@
 package com.vinicius.locadora.service;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,16 +55,13 @@ public class LocacaoService{
             }
         });
 
-        // TODO: calcular o valor da locação e a data prevista de acordo com a classe. (perguntar o que sigifica a data prevista do model CLasse)
-
         Locacao obj = new Locacao();
         obj.setCliente(request.cliente());
-        obj.setDtDevolucaoEfetiva(request.dtDevolucaoEfetiva());
-        obj.setDtDevolucaoPrevista(request.dtDevolucaoPrevista());
-        obj.setDtLocacao(request.dtLocacao());
+        obj.setDtDevolucaoPrevista(request.dtDevolucaoPrevista() != null ? request.dtDevolucaoPrevista() : LocalDate.now().plusDays(request.item().getTitulo().getClasse().getPrazoDevolucao()));
+        obj.setDtLocacao(LocalDate.now());
         obj.setItem(request.item());
         obj.setMultaCobrada(request.multaCobrada());
-        obj.setValorCobrado(request.valorCobrado());
+        obj.setValorCobrado(request.valorCobrado() > 0 || request.valorCobrado() != null ? request.valorCobrado() : request.item().getTitulo().getClasse().getValor());
 
         obj = locacaoRepository.save(obj);
 
@@ -106,12 +104,11 @@ public class LocacaoService{
 
         Locacao obj = locacaoRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + request.id()));
         obj.setCliente(request.cliente());
-        obj.setDtDevolucaoEfetiva(request.dtDevolucaoEfetiva());
-        obj.setDtDevolucaoPrevista(request.dtDevolucaoPrevista());
-        obj.setDtLocacao(request.dtLocacao());
+        obj.setDtDevolucaoPrevista(request.dtDevolucaoPrevista() != null ? request.dtDevolucaoPrevista() : LocalDate.now().plusDays(request.item().getTitulo().getClasse().getPrazoDevolucao()));
         obj.setItem(request.item());
         obj.setMultaCobrada(request.multaCobrada());
-        obj.setValorCobrado(request.valorCobrado());
+        obj.setValorCobrado(request.valorCobrado() > 0 || request.valorCobrado() != null ? request.valorCobrado() : request.item().getTitulo().getClasse().getValor());
+        obj.setItem(request.item());
 
         return ResponseEntity.ok().body(locacaoMapper.toDTO(obj));
     }
