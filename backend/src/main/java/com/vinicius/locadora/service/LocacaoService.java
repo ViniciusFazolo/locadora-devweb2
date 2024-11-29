@@ -16,6 +16,7 @@ import com.vinicius.locadora.exceptions.CancelarLocacaoException;
 import com.vinicius.locadora.exceptions.ItemNaoDisponivelException;
 import com.vinicius.locadora.exceptions.LocacoesAtrasadasException;
 import com.vinicius.locadora.exceptions.ObjetoNaoEncontradoException;
+import com.vinicius.locadora.exceptions.PadraoException;
 import com.vinicius.locadora.exceptions.PreencherTodosCamposException;
 import com.vinicius.locadora.mapper.LocacaoMapper;
 import com.vinicius.locadora.model.Locacao;
@@ -54,6 +55,10 @@ public class LocacaoService{
                 throw new ItemNaoDisponivelException(lc.getDtDevolucaoPrevista());
             }
         });
+
+        if(request.dtDevolucaoPrevista().isBefore(LocalDate.now())){
+            throw new PadraoException("A data de devolução prevista deve ser maior que a data de hoje");
+        }
 
         Locacao obj = new Locacao();
         obj.setCliente(request.cliente());
@@ -101,6 +106,14 @@ public class LocacaoService{
                 throw new ItemNaoDisponivelException(lc.getDtDevolucaoPrevista());
             }
         });
+
+        if(request.dtDevolucaoPrevista().isBefore(LocalDate.now())){
+            throw new PadraoException("A data de devolução prevista deve ser maior que a data de hoje");
+        }
+
+        if(request.dtDevolucaoEfetiva().isBefore(LocalDate.now())){
+            throw new PadraoException("A data de devolução efetiva deve ser maior que a data de hoje");
+        }
 
         Locacao obj = locacaoRepository.findById(request.id()).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + request.id()));
         obj.setCliente(request.cliente());
