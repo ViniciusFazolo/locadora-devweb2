@@ -151,7 +151,7 @@ public class LocacaoService{
     public ResponseEntity<String> devolucao(int numSerie){
         //TODO: O funcionário informa o número de série do item que está sendo devolvido. De posse do número de série, identifica-se o item e, a partir dele, identifica-sealocação correspondente, já que um item não pode ter duas locações vigentes emumamesma data. Deve-se verificar se a locação está em atraso (data de devolução >datadedevolução prevista). Caso esteja em atraso, informar a multa devida. O valor a ser pago é dado pela soma do valor da locação (caso não tenha sidopagaainda) com o valor da multa. Registrar a devolução da fita, atribuindo a data corrente como data de devoluçãoefetiva. Caso haja multa, registrar o valor aplicado da multa.
       
-        Item obj = itemRepository.findByNumOrder().orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de número de série: " + numSerie));
+        Item obj = itemRepository.findByNumSerie(numSerie).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de número de série: " + numSerie));
         
         if(obj.getLocacao().size() < 1){
             throw new PadraoException("O item informado não está locado no momento. número de série: " + numSerie);
