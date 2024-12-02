@@ -18,109 +18,163 @@ import { SocioService } from '../../services/socio.service';
 @Component({
   selector: 'app-dependente',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule],
+  imports: [
+    LayoutBaseComponent,
+    TableModule,
+    DialogComponent,
+    ButtonModule,
+    ToastModule,
+    SplitButtonModule,
+    ConfirmPopupModule,
+    FormsModule,
+    CommonModule,
+  ],
   providers: [MessageService, ConfirmationService, DatePipe],
   templateUrl: './dependente.component.html',
-  styles: ``
+  styles: ``,
 })
-export class DependenteComponent implements OnInit{
+export class DependenteComponent implements OnInit {
   isDialogOpen: boolean = false;
-  items!: Dependente[]
+  items!: Dependente[];
   itemToEdit!: Dependente | null;
-  dependente: string = ''
+  dependente: string = '';
   numInscricao: number = 0;
   dtNascimento: string = '';
   sexo: string = '';
   estahAtivo: boolean = true;
-  socio: Socio = {} as Socio
+  socio: Socio = {} as Socio;
   locacoes: Locacao[] = [];
 
   selectedSocio!: Socio;
   socios: Socio[] = [];
 
-  constructor(private messageService: MessageService, private dependenteService: DependenteService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private socioService: SocioService) {}
+  constructor(
+    private messageService: MessageService,
+    private dependenteService: DependenteService,
+    private confirmationService: ConfirmationService,
+    private datePipe: DatePipe,
+    private socioService: SocioService
+  ) {}
 
   ngOnInit(): void {
     this.listAll();
     this.listAllSocios();
   }
 
-  toggleDialog(){
-    this.dependente = ''
-    this.numInscricao = 0
-    this.dtNascimento = ''
-    this.sexo = ''
-    this.estahAtivo = true
-    this.socio = {} as Socio
-    this.isDialogOpen = !this.isDialogOpen
+  toggleDialog() {
+    this.dependente = '';
+    this.dtNascimento = '';
+    this.sexo = '';
+    this.estahAtivo = true;
+    this.socio = {} as Socio;
+    this.isDialogOpen = !this.isDialogOpen;
   }
 
-  listAll(){
+  toggleStatus(item: Dependente): void {
+    if (item.id) {
+      this.dependenteService.updateStatus(item.id).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Status atualizado com sucesso',
+            life: 3000,
+          });
+          item.estahAtivo = !item.estahAtivo;
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar status', err);
+        },
+      });
+    } else {
+      console.error('ID do dependente não definido.');
+    }
+  }
+
+  listAll() {
     this.dependenteService.listAll().subscribe({
       next: (res) => {
         this.items = res;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar dependentes' });
-      }
-    })
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao listar dependentes',
+        });
+      },
+    });
   }
 
-  listAllSocios(){
+  listAllSocios() {
     this.socioService.listAll().subscribe({
       next: (res) => {
         this.socios = res;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
-      }
-    })
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao listar titulos',
+        });
+      },
+    });
   }
 
-  handleSave(){
-    if(!this.dependente || !this.numInscricao || !this.dtNascimento || !this.sexo || !this.socio){
-      this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
-      return
+  handleSave() {
+    if (!this.dependente || !this.dtNascimento || !this.sexo || !this.socio) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Preencha todos os campos',
+      });
+      return;
     }
 
-    if(this.itemToEdit){
-      this.edit()
-    }else{
-      this.create()
+    if (this.itemToEdit) {
+      this.edit();
+    } else {
+      this.create();
     }
   }
 
-  handleEdit(id: number){
+  handleEdit(id: number) {
     this.dependenteService.listById(id).subscribe({
       next: (res) => {
-        this.itemToEdit = res
+        this.itemToEdit = res;
         this.dependente = this.itemToEdit.nome;
         this.numInscricao = this.itemToEdit.numInscricao;
-        this.dtNascimento = this.datePipe.transform(this.itemToEdit.dtNascimento, 'yyyy-MM-dd') || ''
+        this.dtNascimento =
+          this.datePipe.transform(this.itemToEdit.dtNascimento, 'yyyy-MM-dd') ||
+          '';
         this.sexo = this.itemToEdit.sexo;
         this.estahAtivo = this.itemToEdit.estahAtivo;
         this.selectedSocio = this.itemToEdit.socio;
-        this.isDialogOpen = true
+        this.isDialogOpen = true;
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao editar ator' });
-      }
-    })
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao editar ator',
+        });
+      },
+    });
   }
 
-  handleDelete(event: Event, id: number){
+  handleDelete(event: Event, id: number) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Realmente deseja excluir este registro?',
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-sm',
       accept: () => {
-        this.delete(id)
+        this.delete(id);
       },
     });
   }
 
-  edit(){
+  edit() {
     const obj: Dependente = {
       nome: this.dependente,
       numInscricao: this.numInscricao,
@@ -129,23 +183,38 @@ export class DependenteComponent implements OnInit{
       estahAtivo: this.estahAtivo,
       socio: this.selectedSocio,
       locacoes: this.locacoes,
-      id: this.itemToEdit?.id
-    }
+      id: this.itemToEdit?.id,
+    };
 
     this.dependenteService.update(obj).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro atualizado com sucesso', life: 3000 });
-        this.itemToEdit = null
-        this.listAll()
-        this.toggleDialog()
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Registro atualizado com sucesso',
+          life: 3000,
+        });
+        this.itemToEdit = null;
+        this.listAll();
+        this.toggleDialog();
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao atualizar registro' });
-      }
-    })
+      error: (err) => {
+        let errorMessage: string;
+        if (err.error && err.error.message) {
+          errorMessage = err.error.message;
+        } else {
+          errorMessage = 'Erro ao criar registro';
+        }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: errorMessage,
+        });
+      },
+    });
   }
 
-  create(){
+  create() {
     const obj: Dependente = {
       nome: this.dependente,
       numInscricao: this.numInscricao,
@@ -154,38 +223,60 @@ export class DependenteComponent implements OnInit{
       estahAtivo: this.estahAtivo,
       locacoes: this.locacoes,
       socio: this.selectedSocio,
-    }
+    };
 
     this.dependenteService.create(obj).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro inserido com sucesso', life: 3000 });
-        this.listAll()
-        this.toggleDialog()
-      },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao inserir registro' });
-      }
-    })
-  }
-
-  delete(id: number){
-    this.dependenteService.delete(id).subscribe({
-      next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro excluído com sucesso', life: 3000 });
-        this.listAll()
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Registro inserido com sucesso',
+          life: 3000,
+        });
+        this.listAll();
+        this.toggleDialog();
       },
       error: (err) => {
         let errorMessage: string;
-        try{
-          const errorResponse = JSON.parse(err.error);
-          errorMessage = errorResponse.message;
-
-        }catch{
-          errorMessage = 'Erro ao excluir registro';
+        if (err.error && err.error.message) {
+          errorMessage = err.error.message;
+        } else {
+          errorMessage = 'Erro ao criar registro';
         }
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: errorMessage });
-      }
-    })
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: errorMessage,
+        });
+      },
+    });
   }
 
+  delete(id: number) {
+    this.dependenteService.delete(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Registro excluído com sucesso',
+          life: 3000,
+        });
+        this.listAll();
+      },
+      error: (err) => {
+        let errorMessage: string;
+        try {
+          const errorResponse = JSON.parse(err.error);
+          errorMessage = errorResponse.message;
+        } catch {
+          errorMessage = 'Erro ao excluir registro';
+        }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: errorMessage,
+        });
+      },
+    });
+  }
 }

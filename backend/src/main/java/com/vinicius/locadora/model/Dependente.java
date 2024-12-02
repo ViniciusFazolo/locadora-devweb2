@@ -1,6 +1,6 @@
 package com.vinicius.locadora.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +22,7 @@ public class Dependente extends Cliente{
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("dependentes")
     @ManyToOne
     private Socio socio;
 }
