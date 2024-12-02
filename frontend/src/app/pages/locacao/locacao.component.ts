@@ -51,6 +51,11 @@ export class LocacaoComponent implements OnInit{
   selectedItem!: Item;
   itens: Item[] = [];
 
+  defaultDataDevolucaoPrevista: string = '2024-12-31';
+  defaultValorLocacao: number = 30;
+  isValorLocacaoEditable: boolean = false;
+  isDataDevolucaoPrevistaEditable: boolean = false;
+
   constructor(private messageService: MessageService, private locacaoService: LocacaoService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private socioService: SocioService, private itemService: ItemService, private dependenteService: DependenteService) {}
 
   ngOnInit(): void {
@@ -62,9 +67,9 @@ export class LocacaoComponent implements OnInit{
 
   toggleDialog(){
     this.dataLocacao = ''
-    this.dataDevolucaoPrevista = ''
+    this.dataDevolucaoPrevista = this.defaultDataDevolucaoPrevista
     this.dataDevolucaoEfetiva = ''
-    this.valorLocacao = 0
+    this.valorLocacao = this.defaultValorLocacao
     this.valorMulta = 0
     this.cliente = {} as Socio | Dependente
     this.item = {} as Item
@@ -74,6 +79,14 @@ export class LocacaoComponent implements OnInit{
   toggleDevolucaoDialog() {
     this.numeroSerie = 0;
     this.isDialogDevolucaoOpen = !this.isDialogDevolucaoOpen;
+  }
+
+  enableDataDevolucaoPrevistaEdit() {
+    this.isDataDevolucaoPrevistaEditable = true;
+  }
+
+  enableValorLocacaoEdit() {
+    this.isValorLocacaoEditable = true;
   }
 
   listAll(){
@@ -130,7 +143,7 @@ export class LocacaoComponent implements OnInit{
   }
 
   handleSave(){
-    if(!this.dataLocacao || !this.dataDevolucaoEfetiva || !this.dataDevolucaoPrevista || !this.valorLocacao || !this.valorMulta || !this.cliente || !this.item){
+    if(!this.dataLocacao || !this.valorMulta || !this.cliente || !this.item){
       this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
       return
     }
@@ -177,9 +190,9 @@ export class LocacaoComponent implements OnInit{
     const obj: Locacao = {
       id: this.itemToEdit?.id,
       dtLocacao: this.dataLocacao,
-      dtDevolucaoPrevista: this.dataDevolucaoPrevista,
+      dtDevolucaoPrevista: this.dataDevolucaoPrevista || this.defaultDataDevolucaoPrevista,
       dtDevolucaoEfetiva: this.dataDevolucaoEfetiva,
-      valorCobrado: this.valorLocacao,
+      valorCobrado: this.valorLocacao || this.defaultValorLocacao,
       multaCobrada: this.valorMulta,
       cliente: this.selectedCliente,
       item: this.selectedItem
@@ -191,6 +204,8 @@ export class LocacaoComponent implements OnInit{
         this.itemToEdit = null
         this.listAll()
         this.toggleDialog()
+        this.isDataDevolucaoPrevistaEditable = false;
+        this.isValorLocacaoEditable = false;
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao atualizar registro' });
@@ -201,9 +216,9 @@ export class LocacaoComponent implements OnInit{
   create(){
     const obj: Locacao = {
       dtLocacao: this.dataLocacao,
-      dtDevolucaoPrevista: this.dataDevolucaoPrevista,
+      dtDevolucaoPrevista: this.dataDevolucaoPrevista || this.defaultDataDevolucaoPrevista,
       dtDevolucaoEfetiva: this.dataDevolucaoEfetiva,
-      valorCobrado: this.valorLocacao,
+      valorCobrado: this.valorLocacao || this.defaultValorLocacao,
       multaCobrada: this.valorMulta,
       cliente: this.selectedCliente,
       item: this.selectedItem
@@ -214,6 +229,8 @@ export class LocacaoComponent implements OnInit{
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro inserido com sucesso', life: 3000 });
         this.listAll()
         this.toggleDialog()
+        this.isDataDevolucaoPrevistaEditable = false;
+        this.isValorLocacaoEditable = false;
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao inserir registro' });

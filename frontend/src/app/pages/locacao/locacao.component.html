@@ -44,13 +44,18 @@
               </div>
 
               <div class="mb-3 w-full">
-                <label for="" class="block mb-2">Data de devolução prevista: </label>
-                <input
-                  type="date"
-                  [(ngModel)]="dataDevolucaoPrevista"
-                  [ngModelOptions]="{ standalone: true }"
-                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                />
+                <label for="" class="block mb-2">Data de devolução prevista:</label>
+                <div class="flex items-center">
+                  <input
+                    type="date"
+                    [(ngModel)]="dataDevolucaoPrevista"
+                    [ngModelOptions]="{ standalone: true }"
+                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                    [disabled]="!isDataDevolucaoPrevistaEditable"
+                    [value]="dataDevolucaoPrevista || defaultDataDevolucaoPrevista"
+                  />
+                  <p-button icon="pi pi-pencil" size="small" class="ml-2" (click)="enableDataDevolucaoPrevistaEdit()"></p-button>
+                </div>
               </div>
 
               <div class="mb-3 w-full">
@@ -64,13 +69,17 @@
               </div>
 
               <div class="mb-3 w-full">
-                <label for="" class="block mb-2">Valor cobrado: </label>
-                <input
-                  type="number"
-                  [(ngModel)]="valorLocacao"
-                  [ngModelOptions]="{ standalone: true }"
-                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                />
+                <label for="" class="block mb-2">Valor cobrado:</label>
+                <div class="flex items-center">
+                  <input
+                    type="number"
+                    [(ngModel)]="valorLocacao"
+                    [ngModelOptions]="{ standalone: true }"
+                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                    [disabled]="!isValorLocacaoEditable"
+                  />
+                  <p-button icon="pi pi-pencil" size="small" class="ml-2" (click)="enableValorLocacaoEdit()"></p-button>
+                </div>
               </div>
 
               <div class="mb-3 w-full">
