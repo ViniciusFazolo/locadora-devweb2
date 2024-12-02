@@ -17,7 +17,7 @@ import { TituloService } from '../../services/titulo.service';
 @Component({
   selector: 'app-classe',
   standalone: true,
-  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, DatePipe, CommonModule],
+  imports: [LayoutBaseComponent, TableModule, DialogComponent, ButtonModule, ToastModule, SplitButtonModule, ConfirmPopupModule, FormsModule, CommonModule],
   templateUrl: './classe.component.html',
   providers: [MessageService, ConfirmationService, DatePipe],
   styles: ``
@@ -27,7 +27,7 @@ export class ClasseComponent implements OnInit{
   items!: Classe[]
   itemToEdit!: Classe | null;
   classe: string = '';
-  prazoDevolucao: string = '';
+  prazoDevolucao: number = 0;
   valor: number = 0;
   titulos: Titulo[] = [];
 
@@ -40,7 +40,7 @@ export class ClasseComponent implements OnInit{
 
   toggleDialog(){
     this.classe = ''
-    this.prazoDevolucao = ''
+    this.prazoDevolucao = 0
     this.valor = 0
     this.isDialogOpen = !this.isDialogOpen
   }
@@ -87,7 +87,7 @@ export class ClasseComponent implements OnInit{
         this.itemToEdit = res;
         this.classe = this.itemToEdit.nome;
         this.valor = this.itemToEdit.valor;
-        this.prazoDevolucao = this.datePipe.transform(this.itemToEdit.prazoDevolucao, 'yyyy-MM-dd') || '';
+        this.prazoDevolucao = this.itemToEdit.prazoDevolucao;
         this.titulos = this.itemToEdit.titulos;
         this.isDialogOpen = true
       },
