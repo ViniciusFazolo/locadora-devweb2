@@ -37,7 +37,7 @@ public class LocacaoService{
     private LocacaoMapper locacaoMapper;
 
     public ResponseEntity<LocacaoResponseDTO> salvar(LocacaoRequestDTO request) {
-        if(request.dtLocacao() == null || request.dtDevolucaoEfetiva() == null || request.dtDevolucaoPrevista() == null ||
+        if(request.dtLocacao() == null || request.dtDevolucaoEfetiva() == null ||
             request.valorCobrado() == null || request.multaCobrada() == null || request.cliente() == null || request.item() == null
         ){
             throw new PreencherTodosCamposException();
