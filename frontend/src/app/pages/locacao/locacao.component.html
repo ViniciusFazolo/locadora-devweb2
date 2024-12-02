@@ -7,7 +7,6 @@
           <tr>
               <th>Data de Locação</th>
               <th>Data de Locação Prevista</th>
-              <th>Data de Devolução Efetiva</th>
               <th>Valor cobrado</th>
               <th>Multa cobrada</th>
               <th>Cliente</th>
@@ -20,7 +19,6 @@
           <tr>
               <td>{{ item.dtLocacao | date: 'shortDate' }}</td>
               <td>{{ item.dtDevolucaoPrevista | date: 'shortDate' }}</td>
-              <td>{{ item.dtDevolucaoEfetiva | date: 'shortDate' }}</td>
               <td>{{ item.valorCobrado }}</td>
               <td>{{ item.multaCobrada }}</td>
               <td>{{ item.cliente.nome }}</td>
@@ -36,12 +34,21 @@
   @if (isDialogOpen) {
       <app-dialog [visible]="isDialogOpen" (closeDialog)="toggleDialog()" [header]="itemToEdit ? 'Editar locação' : 'Nova Locação'">
           <form (ngSubmit)="handleSave()">
-              <div class="mb-3 w-full">
-                  <label for="" class="block mb-2">Data de locação:</label>
-                  <input type="date" name="dataLocacao"
-                      class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                      [(ngModel)]="dataLocacao" [ngModelOptions]="{standalone: true}">
-              </div>
+
+            <div class="mb-3 w-full">
+              <label for="cliente" class="block mb-2">Cliente</label>
+              <select name="cliente" [(ngModel)]="selectedCliente" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                <option *ngFor="let socio of socios" [ngValue]="socio">{{ socio.nome }}</option>
+                <option *ngFor="let dependente of dependentes" [ngValue]="dependente">{{ dependente.nome }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3 w-full">
+              <label for="item" class="block mb-2">Item</label>
+              <select name="item" [(ngModel)]="selectedItem" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                <option *ngFor="let item of itens" [ngValue]="item">{{ item.numSerie }}</option>
+              </select>
+            </div>
 
               <div class="mb-3 w-full">
                 <label for="" class="block mb-2">Data de devolução prevista:</label>
@@ -59,16 +66,6 @@
               </div>
 
               <div class="mb-3 w-full">
-                <label for="" class="block mb-2">Data de devolução efetiva: </label>
-                <input
-                  type="date"
-                  [(ngModel)]="dataDevolucaoEfetiva"
-                  [ngModelOptions]="{ standalone: true }"
-                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                />
-              </div>
-
-              <div class="mb-3 w-full">
                 <label for="" class="block mb-2">Valor cobrado:</label>
                 <div class="flex items-center">
                   <input
@@ -80,31 +77,6 @@
                   />
                   <p-button icon="pi pi-pencil" size="small" class="ml-2" (click)="enableValorLocacaoEdit()"></p-button>
                 </div>
-              </div>
-
-              <div class="mb-3 w-full">
-                <label for="" class="block mb-2">Multa cobrada: </label>
-                <input
-                  type="number"
-                  [(ngModel)]="valorMulta"
-                  [ngModelOptions]="{ standalone: true }"
-                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                />
-              </div>
-
-              <div class="mb-3 w-full">
-                <label for="cliente" class="block mb-2">Cliente</label>
-                <select name="cliente" [(ngModel)]="selectedCliente" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-                  <option *ngFor="let socio of socios" [ngValue]="socio">{{ socio.nome }}</option>
-                  <option *ngFor="let dependente of dependentes" [ngValue]="dependente">{{ dependente.nome }}</option>
-                </select>
-              </div>
-
-              <div class="mb-3 w-full">
-                <label for="item" class="block mb-2">Item</label>
-                <select name="item" [(ngModel)]="selectedItem" [ngModelOptions]="{standalone: true}" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-                  <option *ngFor="let item of itens" [ngValue]="item">{{ item.numSerie }}</option>
-                </select>
               </div>
 
               <p-button label="Salvar" type="submit" severity="success" icon="pi pi-save" />
