@@ -154,8 +154,8 @@ export class ItemComponent implements OnInit{
         this.listAll()
         this.toggleDialog()
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao inserir registro' });
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error.message });
       }
     })
   }
