@@ -149,13 +149,15 @@ export class LocacaoComponent implements OnInit{
           this.toggleDevolucaoDialog();
           this.listAll();
         },
-        error: (err) =>
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não é possvel devolver item' }),
+        error: (err) =>{
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error.message })
+        }
       });
     } else {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao devolver item' });
     }
   }
+  
   handleSave(){
     if (!this.dataLocacao || !this.dataDevolucaoEfetiva) {
       const currentDate = new Date();
