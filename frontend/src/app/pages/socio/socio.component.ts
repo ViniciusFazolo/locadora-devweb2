@@ -45,10 +45,28 @@ export class SocioComponent implements OnInit{
 
   toggleDialog(){
     this.socio = ''
-    this.numInscricao = 0
     this.dtNascimento = ''
     this.sexo = ''
+    this.endereco = ''
+    this.cpf = ''
+    this.tel = 0
     this.isDialogOpen = !this.isDialogOpen
+  }
+
+  toggleStatus(item: Dependente): void {
+    if (item.id) {
+      this.socioService.updateStatus(item.id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Status atualizado com sucesso', life: 3000 });
+          item.estahAtivo = !item.estahAtivo;
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar status', err);
+        },
+      });
+    } else {
+      console.error('ID do dependente não definido.');
+    }
   }
 
   listAll(){
@@ -63,7 +81,7 @@ export class SocioComponent implements OnInit{
   }
 
   handleSave(){
-    if(!this.socio || !this.numInscricao || !this.dtNascimento || !this.sexo){
+    if(!this.socio || !this.dtNascimento || !this.sexo){
       this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
       return
     }

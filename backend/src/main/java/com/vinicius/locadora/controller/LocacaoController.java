@@ -54,7 +54,7 @@ public class LocacaoController {
         return locacaoService.cancelar(id);
     }
     
-    @GetMapping("/devolucao")
+    @GetMapping("/devolucao/{numSerie}")
     public ResponseEntity<String> devolucao(@PathVariable int numSerie){
         return locacaoService.devolucao(numSerie);
     }

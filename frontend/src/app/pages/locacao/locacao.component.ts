@@ -35,9 +35,9 @@ export class LocacaoComponent implements OnInit{
   itemToEdit!: Locacao | null;
   dataLocacao: string = '';
   dataDevolucaoPrevista: string = '';
-  dataDevolucaoEfetiva: string = '';
+  dataDevolucaoEfetiva: string = '2024-12-31';
   valorLocacao: number = 0;
-  valorMulta: number = 0;
+  valorMulta: number = 5;
   cliente: Socio | Dependente = {} as Socio | Dependente;
   item: Item = {} as Item;
   numeroSerie: number = 0;
@@ -51,6 +51,12 @@ export class LocacaoComponent implements OnInit{
   selectedItem!: Item;
   itens: Item[] = [];
 
+  defaultDataDevolucaoEfetiva: string = '2024-12-31';
+  defaultDataDevolucaoPrevista: string = '2024-12-31';
+  defaultValorLocacao: number = 30;
+  isValorLocacaoEditable: boolean = false;
+  isDataDevolucaoPrevistaEditable: boolean = false;
+
   constructor(private messageService: MessageService, private locacaoService: LocacaoService, private confirmationService: ConfirmationService, private datePipe: DatePipe, private socioService: SocioService, private itemService: ItemService, private dependenteService: DependenteService) {}
 
   ngOnInit(): void {
@@ -62,10 +68,10 @@ export class LocacaoComponent implements OnInit{
 
   toggleDialog(){
     this.dataLocacao = ''
-    this.dataDevolucaoPrevista = ''
-    this.dataDevolucaoEfetiva = ''
-    this.valorLocacao = 0
-    this.valorMulta = 0
+    this.dataDevolucaoPrevista = this.defaultDataDevolucaoPrevista
+    this.dataDevolucaoEfetiva = this.defaultDataDevolucaoEfetiva
+    this.valorLocacao = this.defaultValorLocacao
+    this.valorMulta = 5
     this.cliente = {} as Socio | Dependente
     this.item = {} as Item
     this.isDialogOpen = !this.isDialogOpen
@@ -73,7 +79,21 @@ export class LocacaoComponent implements OnInit{
 
   toggleDevolucaoDialog() {
     this.numeroSerie = 0;
+    this.dataDevolucaoPrevista = this.defaultDataDevolucaoPrevista
+    this.dataDevolucaoEfetiva = this.datePipe.transform(new Date(), 'yyyy-MM-dd') || '';
+    this.valorLocacao = this.defaultValorLocacao
+    this.valorMulta = 5
+    this.cliente = {} as Socio | Dependente
+    this.item = {} as Item
     this.isDialogDevolucaoOpen = !this.isDialogDevolucaoOpen;
+  }
+
+  enableDataDevolucaoPrevistaEdit() {
+    this.isDataDevolucaoPrevistaEditable = true;
+  }
+
+  enableValorLocacaoEdit() {
+    this.isValorLocacaoEditable = true;
   }
 
   listAll(){
@@ -123,16 +143,29 @@ export class LocacaoComponent implements OnInit{
 
   handleDevolucao() {
     if (this.numeroSerie) {
-      this.toggleDevolucaoDialog();
+      this.locacaoService.devolucao(this.numeroSerie).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro devolvido com sucesso', life: 3000 });
+          this.toggleDevolucaoDialog();
+          this.listAll();
+        },
+        error: (err) =>
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não é possvel devolver item' }),
+      });
     } else {
-      console.error('Por favor, insira um número de série válido.');
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao devolver item' });
     }
   }
-
   handleSave(){
-    if(!this.dataLocacao || !this.dataDevolucaoEfetiva || !this.dataDevolucaoPrevista || !this.valorLocacao || !this.valorMulta || !this.cliente || !this.item){
-      this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
-      return
+    if (!this.dataLocacao || !this.dataDevolucaoEfetiva) {
+      const currentDate = new Date();
+      this.dataLocacao = this.datePipe.transform(currentDate, 'yyyy-MM-dd') || '';
+      this.dataDevolucaoEfetiva = this.datePipe.transform(currentDate, 'yyyy-MM-dd') || '';
+    }
+
+    if (!this.valorMulta || !this.cliente || !this.item) {
+      this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos obrigatórios' });
+      return;
     }
 
     if(this.itemToEdit){
@@ -148,7 +181,7 @@ export class LocacaoComponent implements OnInit{
         this.itemToEdit = res
         this.dataLocacao = this.datePipe.transform(this.itemToEdit.dtLocacao, 'yyyy-MM-dd') || ''
         this.dataDevolucaoPrevista = this.datePipe.transform(this.itemToEdit.dtDevolucaoPrevista, 'yyyy-MM-dd') || ''
-        this.dataDevolucaoEfetiva = this.datePipe.transform(this.itemToEdit.dtDevolucaoEfetiva, 'yyyy-MM-dd') || ''
+        this.dataDevolucaoEfetiva = this.datePipe.transform(this.itemToEdit.dtDevolucaoPrevista, 'yyyy-MM-dd') || ''
         this.valorLocacao = this.itemToEdit.valorCobrado;
         this.valorMulta = this.itemToEdit.multaCobrada;
         this.selectedCliente = this.itemToEdit.cliente;
@@ -177,9 +210,9 @@ export class LocacaoComponent implements OnInit{
     const obj: Locacao = {
       id: this.itemToEdit?.id,
       dtLocacao: this.dataLocacao,
-      dtDevolucaoPrevista: this.dataDevolucaoPrevista,
-      dtDevolucaoEfetiva: this.dataDevolucaoEfetiva,
-      valorCobrado: this.valorLocacao,
+      dtDevolucaoPrevista: this.dataDevolucaoPrevista || this.defaultDataDevolucaoPrevista,
+      dtDevolucaoEfetiva: this.dataDevolucaoPrevista || this.defaultDataDevolucaoPrevista,
+      valorCobrado: this.valorLocacao || this.defaultValorLocacao,
       multaCobrada: this.valorMulta,
       cliente: this.selectedCliente,
       item: this.selectedItem
@@ -191,6 +224,8 @@ export class LocacaoComponent implements OnInit{
         this.itemToEdit = null
         this.listAll()
         this.toggleDialog()
+        this.isDataDevolucaoPrevistaEditable = false;
+        this.isValorLocacaoEditable = false;
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao atualizar registro' });
@@ -201,9 +236,9 @@ export class LocacaoComponent implements OnInit{
   create(){
     const obj: Locacao = {
       dtLocacao: this.dataLocacao,
-      dtDevolucaoPrevista: this.dataDevolucaoPrevista,
-      dtDevolucaoEfetiva: this.dataDevolucaoEfetiva,
-      valorCobrado: this.valorLocacao,
+      dtDevolucaoPrevista: this.dataDevolucaoPrevista || this.defaultDataDevolucaoPrevista,
+      dtDevolucaoEfetiva: this.dataDevolucaoEfetiva || this.defaultDataDevolucaoEfetiva,
+      valorCobrado: this.valorLocacao || this.defaultValorLocacao,
       multaCobrada: this.valorMulta,
       cliente: this.selectedCliente,
       item: this.selectedItem
@@ -214,8 +249,11 @@ export class LocacaoComponent implements OnInit{
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro inserido com sucesso', life: 3000 });
         this.listAll()
         this.toggleDialog()
+        this.isDataDevolucaoPrevistaEditable = false;
+        this.isValorLocacaoEditable = false;
       },
-      error: () => {
+      error: (err) => {
+        console.log(err);
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao inserir registro' });
       }
     })

@@ -57,7 +57,8 @@ export class AtorComponent implements OnInit{
       next: (res) => {
         this.titulos = res;
       },
-      error: () => {
+      error: (err) => {
+        console.log(err)
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao listar titulos' });
       }
     })

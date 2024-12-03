@@ -133,6 +133,11 @@ public class LocacaoService{
 
     public ResponseEntity<String> deletar(int id){
         Locacao obj = locacaoRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + id));
+
+        if(obj.getValorCobrado() != null){
+            throw new CancelarLocacaoException();
+        }
+        
         locacaoRepository.delete(obj);
         return ResponseEntity.ok().body("Registro excluído com sucesso");
     }
