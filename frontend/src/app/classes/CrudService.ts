@@ -28,7 +28,7 @@ export class CrudService<T extends {id?: number}> {
     return this.httpClient.patch<void>(`${this.url}/${id}/status`, {});
   }
 
-  devolucao(numSerie: number): Observable<String> {
-    return this.httpClient.get<string>(`${this.url}/devolucao/${numSerie}`);
+  devolucao(numSerie: number): Observable<string> {
+    return this.httpClient.get(`${this.url}/devolucao/${numSerie}`, { responseType: 'text' });
   }
 }
