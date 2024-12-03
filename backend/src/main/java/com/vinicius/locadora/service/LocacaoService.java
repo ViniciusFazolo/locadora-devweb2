@@ -154,8 +154,6 @@ public class LocacaoService{
     }
     
     public ResponseEntity<String> devolucao(int numSerie){
-        //TODO: O funcionário informa o número de série do item que está sendo devolvido. De posse do número de série, identifica-se o item e, a partir dele, identifica-sealocação correspondente, já que um item não pode ter duas locações vigentes emumamesma data. Deve-se verificar se a locação está em atraso (data de devolução >datadedevolução prevista). Caso esteja em atraso, informar a multa devida. O valor a ser pago é dado pela soma do valor da locação (caso não tenha sidopagaainda) com o valor da multa. Registrar a devolução da fita, atribuindo a data corrente como data de devoluçãoefetiva. Caso haja multa, registrar o valor aplicado da multa.
-      
         Item obj = itemRepository.findByNumSerie(numSerie).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de número de série: " + numSerie));
         
         if(obj.getLocacao().size() < 1){
@@ -169,24 +167,28 @@ public class LocacaoService{
             }
         }
 
+        LocalDate currentDate = LocalDate.now();
         if(index != -1){
             Locacao loc = obj.getLocacao().get(index);
 
             String multa = "";
-            if(loc.getDtDevolucaoEfetiva().isBefore(loc.getDtDevolucaoPrevista())){
-                multa = obj.getTitulo().getClasse().getValor().toString();
+            if(currentDate.isBefore(loc.getDtDevolucaoPrevista())){
+                multa += String.valueOf(obj.getTitulo().getClasse().getValor());
             }
 
-            String mensagem = "Item --- " + obj.getTitulo() + "\n";
+            String mensagem = "Item --- " + obj.getTitulo().getNome() + "\n";
             mensagem += "Valor da locação --- " + loc.getValorCobrado();
             
             if(!multa.isEmpty()){
-                mensagem += "Valor da multa --- " + multa;
-                mensagem += "Total --- " + Integer.parseInt(multa) + loc.getValorCobrado();
+                mensagem += "Valor da multa --- " + multa + "\n";
+                mensagem += "Total --- " + (Double.parseDouble(multa) + loc.getValorCobrado()) + "\n";
             }else{
                 mensagem += "Total --- " + loc.getValorCobrado();
             }
 
+            Locacao lc = obj.getLocacao().get(index);
+            lc.setDtDevolucaoEfetiva(currentDate);
+            locacaoRepository.save(lc);
             return ResponseEntity.ok().body(mensagem);
         }else{
             return ResponseEntity.badRequest().body("Erro");
