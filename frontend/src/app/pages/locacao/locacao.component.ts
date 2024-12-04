@@ -35,7 +35,7 @@ export class LocacaoComponent implements OnInit{
   itemToEdit!: Locacao | null;
   dataLocacao: string = '';
   dataDevolucaoPrevista: string = '';
-  dataDevolucaoEfetiva: string = '2024-12-31';
+  dataDevolucaoEfetiva: string = '';
   valorLocacao: number = 0;
   valorMulta: number = 5;
   cliente: Socio | Dependente = {} as Socio | Dependente;
@@ -157,7 +157,7 @@ export class LocacaoComponent implements OnInit{
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao devolver item' });
     }
   }
-  
+
   handleSave(){
     if (!this.dataLocacao || !this.dataDevolucaoEfetiva) {
       const currentDate = new Date();

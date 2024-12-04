@@ -1,5 +1,5 @@
 <app-layout-base [title]="'Listagem de locações'" [btnTitle]="'Novo'" (toggleDialog)="toggleDialog()">
-  <p-button label="Devolução" icon="pi pi-refresh" class="ml-2" (click)="toggleDevolucaoDialog()" />
+  <p-button label="Devolução" icon="pi pi-refresh" class="ml-2 mb-1" (click)="toggleDevolucaoDialog()" />
   <p-toast />
   <p-confirmPopup />
   <p-table [value]="items" [tableStyle]="{ 'min-width': '50rem' }">
@@ -7,6 +7,7 @@
           <tr>
               <th>Data de Locação</th>
               <th>Data de Locação Prevista</th>
+              <th>Data de Locação Efetiva</th>
               <th>Valor cobrado</th>
               <th>Multa cobrada</th>
               <th>Cliente</th>
@@ -19,6 +20,7 @@
           <tr>
               <td>{{ item.dtLocacao | date: 'shortDate' }}</td>
               <td>{{ item.dtDevolucaoPrevista | date: 'shortDate' }}</td>
+              <td>{{ item.dtDevolucaoEfetiva ? (item.dtDevolucaoEfetiva | date: 'shortDate') : '-' }}</td>
               <td>{{ item.valorCobrado }}</td>
               <td>{{ item.multaCobrada }}</td>
               <td>{{ item.cliente.nome }}</td>
@@ -86,6 +88,7 @@
 
   @if (isDialogDevolucaoOpen){
     <app-dialog [visible]="isDialogDevolucaoOpen" (closeDialog)="toggleDevolucaoDialog()" [header]="tituloDevolucao">
+
       <form (ngSubmit)="handleDevolucao()">
           <div class="mb-3 w-full">
               <label for="" class="block mb-2">Número de série do item:</label>
@@ -93,6 +96,13 @@
                   class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                   [(ngModel)]="numeroSerie" [ngModelOptions]="{standalone: true}">
           </div>
+
+          <div class="mb-3 w-full">
+            <label for="" class="block mb-2">Valor cobrado:</label>
+            <input type="number" name="valorCobrado"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                [(ngModel)]="valorLocacao" [ngModelOptions]="{standalone: true}" [disabled]="true">
+        </div>
 
           <p-button label="Registrar Devolução" type="submit" severity="success" icon="pi pi-save" />
       </form>

@@ -134,7 +134,7 @@ public class LocacaoService{
     public ResponseEntity<String> deletar(int id){
         Locacao obj = locacaoRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + id));
 
-        if(obj.getValorCobrado() != null){
+        if(obj.getValorCobrado() != 0){
             throw new CancelarLocacaoException();
         }
         
@@ -145,7 +145,7 @@ public class LocacaoService{
     public ResponseEntity<String> cancelar(int id){
         Locacao obj = locacaoRepository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Não foi possível encontrar a locação de id:" + id));
     
-        if(obj.getValorCobrado() != null){
+        if( obj.getValorCobrado() != 0){
             throw new CancelarLocacaoException();
         }
 
@@ -187,6 +187,7 @@ public class LocacaoService{
             }
 
             Locacao lc = obj.getLocacao().get(index);
+            lc.setValorCobrado(0.0);
             lc.setDtDevolucaoEfetiva(currentDate);
             locacaoRepository.save(lc);
             return ResponseEntity.ok().body(mensagem);
