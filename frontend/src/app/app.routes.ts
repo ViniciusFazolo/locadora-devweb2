@@ -9,6 +9,7 @@ import { TituloComponent } from './pages/titulo/titulo.component';
 import { SocioComponent } from './pages/socio/socio.component';
 import { DependenteComponent } from './pages/dependente/dependente.component';
 import { LocacaoComponent } from './pages/locacao/locacao.component';
+import { BuscarComponent } from './pages/buscar/buscar.component';
 
 export const routes: Routes = [
     {
@@ -46,6 +47,10 @@ export const routes: Routes = [
     {
       path: 'locacao',
       component: LocacaoComponent
+    },
+    {
+      path: 'buscar',
+      component: BuscarComponent
     },
     {
         path: '**',

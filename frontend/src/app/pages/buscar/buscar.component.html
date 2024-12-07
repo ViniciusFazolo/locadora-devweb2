@@ -1,0 +1,106 @@
+<app-layout-base
+  [title]="'Buscar Titulo'"
+>
+    <p-toast />
+    <h4>Selecione a opção pela qual deseja buscar: </h4>
+
+    <div class="flex flex-wrap gap-3 mb-3">
+        <div class="flex align-items-center">
+            <p-radioButton 
+                value="nome" 
+                inputId="nome"
+                [(ngModel)]="buscaTipo" 
+                />
+            <label for="nome" class="ml-2">
+                Buscar por Nome
+            </label>
+        </div>
+        
+        <div class="flex align-items-center">
+            <p-radioButton 
+                value="categoria" 
+                [(ngModel)]="buscaTipo" 
+                inputId="categoria"
+                (ngModelChange)="getCategorias()"/>
+            <label for="categoria" class="ml-2">
+                Buscar por Categoria
+            </label>
+        </div>
+        
+        <div class="flex align-items-center">
+            <p-radioButton 
+                value="ator" 
+                [(ngModel)]="buscaTipo" 
+                inputId="ator" 
+                (ngModelChange)="getAtores()"/>
+            <label for="ator" class="ml-2">
+                Buscar por Ator
+            </label>
+        </div>
+    </div>
+
+    @if(buscaTipo == 'nome'){
+        <form (ngSubmit)="buscarPorNome(nome)">
+            <div class="field">
+                <label for="porNome">Digite Pelo Nome do Título</label>
+                <input [(ngModel)]="nome" name="porNome" id="porNome" type="text" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </div>
+
+            <p-button label="Buscar" type="submit" severity="success" icon="pi pi-search"/>
+        </form>
+    }
+
+    @if(buscaTipo == 'categoria'){
+        <form (ngSubmit)="buscarPorCategoria(categoria)">
+            <div class="field">
+                <label for="porCategoria">Selecione a Categoria</label>
+                <select id="porCategoria" name="categoria" [(ngModel)]="categoria" required class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    @for (cat of categorias; track $index) {
+                        <option [value]="cat">{{cat}}</option>
+                    }
+                </select>
+            </div>
+
+            <p-button label="Buscar" type="submit" severity="success" icon="pi pi-search" />
+        </form>
+    }
+
+    @if(buscaTipo == 'ator'){
+        <form (ngSubmit)="buscarPorAtor(ator)">
+            <div class="field">
+                <label for="porAtor">Selecione o Ator</label>
+                <select id="porAtor" [(ngModel)]="ator" name="ator" required class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    @for (at of atores; track $index) {
+                        <option [value]="at">{{at}}</option>
+                    }
+                </select>
+            </div>
+
+            <p-button label="Buscar" type="submit" severity="success" icon="pi pi-search" />
+        </form>
+    }
+
+    @if(titulos){
+        <div class="grid mt-3">
+            @for (ttl of titulos; track $index) {
+                <p-card class="col-12 md:col-4" [header]="ttl.nome + ' - ' + (ttl.ano | date: 'yyyy')" [subheader]="ttl.categoria" [style]="{width: '100%'}">
+                    <p class="mb-2">
+                        {{ttl.sinopse}}
+                    </p>
+                    <p class="mb-2">
+                        <span class="block font-semibold">Atores</span>
+                        @for (ator of ttl.ator; track $index) {
+                            <span class="block">{{ator.nome}}</span>
+                        }
+                    </p>
+                    <p class="mb-2">
+                        <span class="block font-semibold">Diretor</span>
+                        {{ttl.diretor.nome}}
+                    </p>
+                </p-card>
+            }   
+        </div>
+    }
+    
+
+</app-layout-base>
