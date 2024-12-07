@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.vinicius.locadora.DTO.RequestDTO.TituloRequestDTO;
 import com.vinicius.locadora.DTO.ResponseDTO.TituloResponseDTO;
@@ -91,5 +92,17 @@ public class TituloService{
 
         tituloRepository.delete(obj);
         return ResponseEntity.ok().body("Registro excluído com sucesso");
+    }
+
+    public ResponseEntity<List<Titulo>> consultarPorNome(String nome){
+        return ResponseEntity.ok().body(tituloRepository.findByNome(nome));
+    }
+
+    public ResponseEntity<List<Titulo>> consultarPorCategoria(@PathVariable String categoria) {
+        return ResponseEntity.ok().body(tituloRepository.findByCategoria(categoria));
+    }
+
+    public ResponseEntity<List<Titulo>> consultarPorAtor(@PathVariable String ator) {
+        return ResponseEntity.ok().body(tituloRepository.findByAtor(ator));
     }
 }
