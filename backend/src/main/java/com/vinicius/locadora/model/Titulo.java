@@ -46,7 +46,7 @@ public class Titulo {
         joinColumns = @JoinColumn(name = "titulo_id"),
         inverseJoinColumns = @JoinColumn(name = "ator_id")
     )
-    @JsonIgnore
+    
     private List<Ator> ator;
 
     @ManyToOne
